@@ -1,0 +1,14 @@
+/Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_DEPENDS_USE_COMPILER=FALSE -G "CodeBlocks - Unix Makefiles" /Users/yigitdemirsan/Desktop/ComputationalGraph-CPP
+CMake Error at CMakeLists.txt:5 (include):
+  include could not find requested file:
+
+    /Users/yigitdemirsan/Desktop/ComputationalGraph-CPP/cmake-build-debug/conanbuildinfo.cmake
+
+
+CMake Error at CMakeLists.txt:6 (conan_basic_setup):
+  Unknown CMake command "conan_basic_setup".
+
+
+-- Configuring incomplete, errors occurred!
+See also "/Users/yigitdemirsan/Desktop/ComputationalGraph-CPP/cmake-build-debug/CMakeFiles/CMakeOutput.log".
+See also "/Users/yigitdemirsan/Desktop/ComputationalGraph-CPP/cmake-build-debug/CMakeFiles/CMakeError.log".
