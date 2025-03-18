@@ -31,6 +31,7 @@ set(HEADERS
         include/ComputationalGraph/FunctionType.hpp
         include/ComputationalGraph/ComputationalNode.hpp
         include/ComputationalGraph/ComputationalGraph.hpp
+        include/ComputationalGraph/ComputationalGraphWithTensor.hpp
         )
 
 # Library creation
