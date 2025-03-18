@@ -2,4 +2,5 @@
 math/1.0.0
 
 [generators]
-cmake
+CMakeDeps
+CMakeToolchain

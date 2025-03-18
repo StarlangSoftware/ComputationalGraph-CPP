@@ -236,6 +236,9 @@ ComputationalGraph_SOURCE_DIR:STATIC=/Users/yigitdemirsan/Desktop/ComputationalG
 //Path to a program.
 ProcessorCount_cmd_sysctl:FILEPATH=/usr/sbin/sysctl
 
+//The directory containing a CMake configuration file for math.
+math_DIR:PATH=math_DIR-NOTFOUND
+
 
 ########################
 # INTERNAL cache entries
