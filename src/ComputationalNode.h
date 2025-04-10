@@ -1,0 +1,8 @@
+//
+// Created by Olcay Taner YILDIZ on 10.04.2025.
+//
+
+#ifndef COMPUTATIONALNODE_H
+#define COMPUTATIONALNODE_H
+
+#endif //COMPUTATIONALNODE_H

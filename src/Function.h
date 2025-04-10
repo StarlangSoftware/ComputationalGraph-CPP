@@ -1,10 +1,11 @@
 //
 // Created by Yiğit Demirşan on 11.03.2025.
 //
+#ifndef FUNCTION_HPP
+#define FUNCTION_HPP
 
-#pragma once
 
-#include <math/Matrix.hpp>
+#include <Matrix.h>
 
 class Function {
 public:
@@ -13,3 +14,4 @@ public:
     virtual Matrix calculate(const Matrix& matrix) const = 0;
     virtual Matrix derivative(const Matrix& matrix) const = 0;
 };
+#endif // FUNCTION_HPP

@@ -1,10 +1,11 @@
-#pragma once
+#ifndef TANH_H
+#define TANH_H
+#include <Matrix.h>
+#include "Function.h"
 
-#include "Function.hpp"
-#include <math/Matrix.hpp>
-
-class Softmax : public Function {
+class Tanh : public Function {
 public:
     Matrix calculate(const Matrix& matrix) const override;
     Matrix derivative(const Matrix& matrix) const override;
 };
+#endif // TANH_H

@@ -1,5 +1,6 @@
-#include "Softmax.hpp"
+#include "Softmax.h"
 #include <cmath>
+#include <Matrix.h>
 
 Matrix Softmax::calculate(const Matrix& matrix) const {
     Matrix result(matrix.getRow(), matrix.getColumn());

@@ -1,4 +1,6 @@
-#include "../include/ComputationalGraph/Sigmoid.hpp"
+#include "Sigmoid.h"
+
+#include <Matrix.h>
 
 Matrix Sigmoid::calculate(const Matrix& matrix) const {
     Matrix result(matrix.getRow(), matrix.getColumn());

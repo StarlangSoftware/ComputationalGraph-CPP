@@ -1,4 +1,6 @@
-#include "ReLU.hpp"
+#include "ReLU.h"
+
+#include <Matrix.h>
 
 Matrix ReLU::calculate(const Matrix& matrix) const {
     Matrix result(matrix.getRow(), matrix.getColumn());

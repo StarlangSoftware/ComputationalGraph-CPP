@@ -1,24 +1,27 @@
-#ifndef COMPUTATIONAL_GRAPH_WITH_TENSOR_HPP
-#define COMPUTATIONAL_GRAPH_WITH_TENSOR_HPP
+#include <unordered_set>
+
+#include "ReLU.h"
+#include "Sigmoid.h"
+#include "Softmax.h"
+#include "Tanh.h"
+#ifndef COMPUTATIONAL_GRAPH_HPP
+#define COMPUTATIONAL_GRAPH_HPP
 
 #include <unordered_map>
 #include <vector>
 #include <list>
-#include <memory>
-#include <optional>
-#include "ComputationalNode.hpp"
-#include "FunctionType.hpp"
-#include "math/Tensor.cpp"
 
-namespace ComputationalGraphWithTensor {
+#include "ComputationalNode.cpp"
 
-    class ComputationalGraphWithTensor {
+namespace ComputationalGraph {
+
+    class ComputationalGraph {
     private:
         std::unordered_map<std::shared_ptr<ComputationalNode>, std::vector<std::shared_ptr<ComputationalNode>>> nodeMap;
         std::unordered_map<std::shared_ptr<ComputationalNode>, std::vector<std::shared_ptr<ComputationalNode>>> reverseNodeMap;
 
     public:
-        ComputationalGraphWithTensor() = default;
+        ComputationalGraph() = default;
 
         std::shared_ptr<ComputationalNode> addEdge(std::shared_ptr<ComputationalNode> first, std::shared_ptr<ComputationalNode> second, bool isBiased) {
             auto newNode = std::make_shared<ComputationalNode>(false, second->getOperator(), isBiased);
@@ -37,7 +40,7 @@ namespace ComputationalGraphWithTensor {
 
         std::list<std::shared_ptr<ComputationalNode>> topologicalSort() {
             std::list<std::shared_ptr<ComputationalNode>> sortedNodes;
-            std::unordered_set<std::shared_ptr<ComputationalNode>> visited;
+            unordered_set<std::shared_ptr<ComputationalNode>> visited;
 
             for (const auto& pair : nodeMap) {
                 if (visited.find(pair.first) == visited.end()) {
@@ -87,35 +90,41 @@ namespace ComputationalGraphWithTensor {
         }
 
     public:
-        std::shared_ptr<Tensor> calculateDerivative(std::shared_ptr<ComputationalNode> node, std::shared_ptr<ComputationalNode> child) {
+        std::shared_ptr<Matrix> calculateDerivative(std::shared_ptr<ComputationalNode> node, std::shared_ptr<ComputationalNode> child) {
             auto left = reverseNodeMap[child][0];
 
             if (reverseNodeMap[child].size() == 1) {
+                std::unique_ptr<Function> function;
                 switch (child->getFunctionType().value()) {
                     case FunctionType::SIGMOID:
-                        return std::make_shared<Tensor>(child->getBackward()->elementwise_op(child->getValue()->sigmoid_derivative(), std::multiplies<float>()));
+                        function = std::make_unique<Sigmoid>();
+                        break;
                     case FunctionType::TANH:
-                        return std::make_shared<Tensor>(child->getBackward()->elementwise_op(child->getValue()->tanh_derivative(), std::multiplies<float>()));
+                        function = std::make_unique<Tanh>();
+                        break;
                     case FunctionType::RELU:
-                        return std::make_shared<Tensor>(child->getBackward()->elementwise_op(child->getValue()->relu_derivative(), std::multiplies<float>()));
+                        function = std::make_unique<ReLU>();
+                        break;
                     case FunctionType::SOFTMAX:
-                        return std::make_shared<Tensor>(child->getBackward()->elementwise_op(child->getValue()->softmax_derivative(), std::multiplies<float>()));
+                        function = std::make_unique<Softmax>();
+                        break;
                     default:
                         return nullptr;
                 }
+                return std::make_shared<Matrix>(child->getBackward()->elementProduct(function->derivative(child->getValue())));
             } else {
                 auto right = reverseNodeMap[child][1];
                 switch (child->getOperator()) {
                     case '*':
                         return left == node ?
-                               std::make_shared<Tensor>(child->getBackward()->dot(*right->getValue())) :
-                               std::make_shared<Tensor>(left->getValue()->transpose().dot(*child->getBackward()));
+                               std::make_shared<Matrix>(child->getBackward()->multiply(right->getValue()->transpose())) :
+                               std::make_shared<Matrix>(left->getValue()->transpose()->multiply(child->getBackward()));
                     case '+':
-                        return std::make_shared<Tensor>(*child->getBackward());
+                        return std::make_shared<Matrix>(*child->getBackward());
                     case '-':
                         return left == node ?
-                               std::make_shared<Tensor>(*child->getBackward()) :
-                               std::make_shared<Tensor>(child->getBackward()->negate());
+                               std::make_shared<Matrix>(*child->getBackward()) :
+                               std::make_shared<Matrix>(child->getBackward()->negate());
                 }
             }
             return nullptr;
@@ -132,21 +141,23 @@ namespace ComputationalGraphWithTensor {
                 for (auto& child : nodeMap[currentNode]) {
                     if (!child->hasValue()) {
                         if (child->getFunctionType()) {
+                            std::unique_ptr<Function> function;
                             switch (child->getFunctionType().value()) {
-                                case FunctionType::TANH: child->setValue(std::make_shared<Tensor>(currentNode->getValue()->tanh())); break;
-                                case FunctionType::SIGMOID: child->setValue(std::make_shared<Tensor>(currentNode->getValue()->sigmoid())); break;
-                                case FunctionType::RELU: child->setValue(std::make_shared<Tensor>(currentNode->getValue()->relu())); break;
-                                case FunctionType::SOFTMAX: child->setValue(std::make_shared<Tensor>(currentNode->getValue()->softmax())); break;
+                                case FunctionType::TANH: function = std::make_unique<Tanh>(); break;
+                                case FunctionType::SIGMOID: function = std::make_unique<Sigmoid>(); break;
+                                case FunctionType::RELU: function = std::make_unique<ReLU>(); break;
+                                case FunctionType::SOFTMAX: function = std::make_unique<Softmax>(); break;
                                 default: break;
                             }
+                            child->setValue(function->calculate(currentNode->getValue()));
                         } else {
-                            child->setValue(std::make_shared<Tensor>(*currentNode->getValue()));
+                            child->setValue(std::make_shared<Matrix>(*currentNode->getValue()));
                         }
                     } else {
                         switch (child->getOperator()) {
-                            case '*': child->setValue(std::make_shared<Tensor>(child->getValue()->dot(*currentNode->getValue()))); break;
-                            case '+': child->setValue(std::make_shared<Tensor>(child->getValue()->elementwise_op(*currentNode->getValue(), std::plus<float>()))); break;
-                            case '-': child->setValue(std::make_shared<Tensor>(child->getValue()->elementwise_op(*currentNode->getValue(), std::minus<float>()))); break;
+                            case '*': child->setValue(child->getValue()->multiply(currentNode->getValue())); break;
+                            case '+': child->getValue()->add(*currentNode->getValue()); break;
+                            case '-': child->getValue()->subtract(*currentNode->getValue()); break;
                         }
                     }
                 }
@@ -154,11 +165,11 @@ namespace ComputationalGraphWithTensor {
 
             std::vector<int> classLabelIndex;
             for (size_t i = 0; i < output->getValue()->getRow(); i++) {
-                float max = -1e9;
+                double max = -1e9;
                 int labelIndex = -1;
                 for (size_t j = 0; j < output->getValue()->getColumn(); j++) {
-                    if (output->getValue()->get({static_cast<int>(i), static_cast<int>(j)}) > max) {
-                        max = output->getValue()->get({static_cast<int>(i), static_cast<int>(j)});
+                    if (output->getValue()->getValue(i, j) > max) {
+                        max = output->getValue(i, j);
                         labelIndex = static_cast<int>(j);
                     }
                 }

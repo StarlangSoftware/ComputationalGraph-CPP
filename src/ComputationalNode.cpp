@@ -1,9 +1,10 @@
 #ifndef COMPUTATIONAL_NODE_HPP
 #define COMPUTATIONAL_NODE_HPP
 
-#include "FunctionType.hpp"
-#include "math/Matrix.hpp"
+#include <Matrix.h>
 #include <optional>
+
+#include "FunctionType.h"
 
 namespace ComputationalGraph {
 
@@ -11,8 +12,8 @@ namespace ComputationalGraph {
     private:
         std::optional<FunctionType> functionType;
         char operatorSymbol;
-        math::Matrix value;
-        math::Matrix backward;
+        Matrix value;
+        Matrix backward;
         bool isLearnable;
         bool isBiased;
 
@@ -26,20 +27,20 @@ namespace ComputationalGraph {
                 : isLearnable(learnable), operatorSymbol(operatorSymbol), isBiased(isBiased), functionType(std::nullopt) {}
 
         // Constructor with initial value and operator
-        ComputationalNode(const math::Matrix& value, char operatorSymbol)
+        ComputationalNode(const Matrix& value, char operatorSymbol)
                 : value(value), isLearnable(true), operatorSymbol(operatorSymbol), functionType(std::nullopt), isBiased(false) {}
 
         // Getters
         bool getIsBiased() const { return isBiased; }
         std::optional<FunctionType> getFunctionType() const { return functionType; }
         char getOperator() const { return operatorSymbol; }
-        const math::Matrix& getValue() const { return value; }
+        const Matrix& getValue() const { return value; }
         bool getIsLearnable() const { return isLearnable; }
-        const math::Matrix& getBackward() const { return backward; }
+        const Matrix& getBackward() const { return backward; }
 
         // Setters
-        void setValue(const math::Matrix& newValue) { value = newValue; }
-        void setBackward(const math::Matrix& newBackward) { backward = newBackward; }
+        void setValue(const Matrix& newValue) { value = newValue; }
+        void setBackward(const Matrix& newBackward) { backward = newBackward; }
 
         // Update value using backward matrix
         void updateValue() {

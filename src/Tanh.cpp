@@ -1,4 +1,4 @@
-#include "Tanh.hpp"
+#include "Tanh.h"
 #include <cmath>
 
 Matrix Tanh::calculate(const Matrix& matrix) const {

@@ -1,11 +1,11 @@
-#pragma once
+#ifndef RELU_HPP
+#define RELU_HPP
+#include "Function.h"
+#include "Matrix.h"
 
-#include "Function.hpp"
-#include <math/Matrix.hpp>
-#include <cmath>
-
-class Sigmoid : public Function {
+class ReLU : public Function {
 public:
     Matrix calculate(const Matrix& matrix) const override;
     Matrix derivative(const Matrix& matrix) const override;
 };
+#endif // RELU_HPP
