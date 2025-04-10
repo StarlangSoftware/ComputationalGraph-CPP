@@ -10,8 +10,8 @@ class ComputationalGraphConan(ConanFile):
     requires = ["math/1.0.0"]
     license = "GPL License"
     author = "Olcay Taner Yildiz olcay.yildiz@ozyegin.edu.tr"
-    url = "https://github.com/StarlangSoftware/EnglishPosTagger-CPP"
-    description = "English Pos Tagger Implementations"
+    url = "https://github.com/StarlangSoftware/ComputationalGraph-CPP"
+    description = "Computational Graph Implementation"
     topics = ("")
     settings = "os", "compiler", "build_type", "arch"
     options = {"shared": [True, False], "fPIC": [True, False]}
@@ -40,4 +40,4 @@ class ComputationalGraphConan(ConanFile):
         copy(conanfile=self, keep_path=False, src=self.build_folder, dst=join(self.package_folder, "bin"), pattern="*.dll")
 
     def package_info(self):
-        self.cpp_info.libs = ["PosTagger"]
+        self.cpp_info.libs = ["ComputationalGraph"]
