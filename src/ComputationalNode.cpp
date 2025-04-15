@@ -1,57 +1,55 @@
-#ifndef COMPUTATIONAL_NODE_HPP
-#define COMPUTATIONAL_NODE_HPP
-
-#include <Matrix.h>
-#include <optional>
-
-#include "FunctionType.h"
+// computational_node.cpp
+#include "computational_node.h"
 
 namespace ComputationalGraph {
 
-    class ComputationalNode {
-    private:
-        std::optional<FunctionType> functionType;
-        char operatorSymbol;
-        Matrix value;
-        Matrix backward;
-        bool isLearnable;
-        bool isBiased;
+    ComputationalNode::ComputationalNode(bool learnable, FunctionType functionType, bool isBiased)
+            : isLearnable(learnable), functionType(functionType), isBiased(isBiased), operatorSymbol('\0') {}
 
-    public:
-        // Constructor for function-based nodes
-        ComputationalNode(bool learnable, FunctionType functionType, bool isBiased)
-                : isLearnable(learnable), functionType(functionType), isBiased(isBiased), operatorSymbol('\0') {}
+    ComputationalNode::ComputationalNode(bool learnable, char operatorSymbol, bool isBiased)
+            : isLearnable(learnable), operatorSymbol(operatorSymbol), isBiased(isBiased), functionType(std::nullopt) {}
 
-        // Constructor for operator-based nodes
-        ComputationalNode(bool learnable, char operatorSymbol, bool isBiased)
-                : isLearnable(learnable), operatorSymbol(operatorSymbol), isBiased(isBiased), functionType(std::nullopt) {}
+    ComputationalNode::ComputationalNode(const Matrix& value, char operatorSymbol)
+            : value(value), isLearnable(true), operatorSymbol(operatorSymbol), functionType(std::nullopt), isBiased(false) {}
 
-        // Constructor with initial value and operator
-        ComputationalNode(const Matrix& value, char operatorSymbol)
-                : value(value), isLearnable(true), operatorSymbol(operatorSymbol), functionType(std::nullopt), isBiased(false) {}
+    bool ComputationalNode::getIsBiased() const {
+        return isBiased;
+    }
 
-        // Getters
-        bool getIsBiased() const { return isBiased; }
-        std::optional<FunctionType> getFunctionType() const { return functionType; }
-        char getOperator() const { return operatorSymbol; }
-        const Matrix& getValue() const { return value; }
-        bool getIsLearnable() const { return isLearnable; }
-        const Matrix& getBackward() const { return backward; }
+    std::optional<FunctionType> ComputationalNode::getFunctionType() const {
+        return functionType;
+    }
 
-        // Setters
-        void setValue(const Matrix& newValue) { value = newValue; }
-        void setBackward(const Matrix& newBackward) { backward = newBackward; }
+    char ComputationalNode::getOperator() const {
+        return operatorSymbol;
+    }
 
-        // Update value using backward matrix
-        void updateValue() {
-            for (size_t i = 0; i < value.getRow(); ++i) {
-                for (size_t j = 0; j < value.getColumn(); ++j) {
-                    value.setValue(i, j, value.getValue(i, j) + backward.getValue(i, j));
-                }
+    const Matrix& ComputationalNode::getValue() const {
+        return value;
+    }
+
+    bool ComputationalNode::getIsLearnable() const {
+        return isLearnable;
+    }
+
+    const Matrix& ComputationalNode::getBackward() const {
+        return backward;
+    }
+
+    void ComputationalNode::setValue(const Matrix& newValue) {
+        value = newValue;
+    }
+
+    void ComputationalNode::setBackward(const Matrix& newBackward) {
+        backward = newBackward;
+    }
+
+    void ComputationalNode::updateValue() {
+        for (size_t i = 0; i < value.getRow(); ++i) {
+            for (size_t j = 0; j < value.getColumn(); ++j) {
+                value.setValue(i, j, value.getValue(i, j) + backward.getValue(i, j));
             }
         }
-    };
+    }
 
 } // namespace ComputationalGraph
-
-#endif // COMPUTATIONAL_NODE_HPP

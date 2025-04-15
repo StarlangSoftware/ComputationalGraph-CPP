@@ -1,3 +1,0 @@
-/Users/yigitdemirsan/Desktop/ComputationalGraph-CPP/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/Users/yigitdemirsan/Desktop/ComputationalGraph-CPP/cmake-build-debug/CMakeFiles/edit_cache.dir
-/Users/yigitdemirsan/Desktop/ComputationalGraph-CPP/cmake-build-debug/CMakeFiles/ComputationalGraph_CPP.dir
