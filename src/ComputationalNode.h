@@ -6,40 +6,46 @@
 #ifndef COMPUTATIONAL_NODE_H
 #define COMPUTATIONAL_NODE_H
 
-#include <Matrix.h>
+#include <math/Matrix.h>
 #include <optional>
 
 #include "FunctionType.h"
 
-namespace ComputationalGraph {
 
-    class ComputationalNode {
-    private:
-        std::optional<FunctionType> functionType;
-        char operatorSymbol;
-        Matrix value;
-        Matrix backward;
-        bool isLearnable;
-        bool isBiased;
+class ComputationalNode {
+private:
+    std::optional<FunctionType> functionType;
+    char operatorSymbol;
+    Matrix value;
+    Matrix backward;
+    bool isLearnable;
+    bool isBiased;
 
-    public:
-        ComputationalNode(bool learnable, FunctionType functionType, bool isBiased);
-        ComputationalNode(bool learnable, char operatorSymbol, bool isBiased);
-        ComputationalNode(const Matrix& value, char operatorSymbol);
+public:
+    ComputationalNode(bool learnable, FunctionType functionType, bool isBiased);
 
-        bool getIsBiased() const;
-        std::optional<FunctionType> getFunctionType() const;
-        char getOperator() const;
-        const Matrix& getValue() const;
-        bool getIsLearnable() const;
-        const Matrix& getBackward() const;
+    ComputationalNode(bool learnable, char operatorSymbol, bool isBiased);
 
-        void setValue(const Matrix& newValue);
-        void setBackward(const Matrix& newBackward);
+    ComputationalNode(const Matrix &value, char operatorSymbol);
 
-        void updateValue();
-    };
+    bool getIsBiased() const;
 
-} // namespace ComputationalGraph
+    std::optional<FunctionType> getFunctionType() const;
+
+    char getOperator() const;
+
+    const Matrix &getValue() const;
+
+    bool getIsLearnable() const;
+
+    const Matrix &getBackward() const;
+
+    void setValue(const Matrix &newValue);
+
+    void setBackward(const Matrix &newBackward);
+
+    void updateValue();
+};
+
 
 #endif // COMPUTATIONAL_NODE_H

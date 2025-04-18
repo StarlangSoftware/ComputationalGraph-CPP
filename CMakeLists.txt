@@ -3,7 +3,9 @@ project(ComputationalGraph)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_FLAGS "-O3")
 
-find_package(math REQUIRED)
+list(APPEND CMAKE_PREFIX_PATH "${CMAKE_BINARY_DIR}/Release/generators")
+find_package(math REQUIRED CONFIG)
+target_link_libraries(ComputationalGraph PUBLIC math::math)
 
 add_library(ComputationalGraph src/Sigmoid.cpp
         src/ReLU.cpp
@@ -23,4 +25,6 @@ add_library(ComputationalGraph src/Sigmoid.cpp
         src/ComputationalNode.h)
 
 target_link_libraries(ComputationalGraph math::math)
+
+
 

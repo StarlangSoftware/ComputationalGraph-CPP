@@ -1,184 +1,162 @@
-#include <unordered_set>
-
+#include "ComputationalGraph.h"
 #include "ReLU.h"
 #include "Sigmoid.h"
+#include "ComputationalNode.h"
 #include "Softmax.h"
 #include "Tanh.h"
-#ifndef COMPUTATIONAL_GRAPH_HPP
-#define COMPUTATIONAL_GRAPH_HPP
 
-#include <unordered_map>
-#include <vector>
-#include <list>
+ComputationalGraph::ComputationalGraph() = default;
 
-#include "ComputationalNode.cpp"
+ComputationalNode* ComputationalGraph::addEdge(ComputationalNode* first, ComputationalNode* second, bool isBiased) {
+    auto newNode = new ComputationalNode(false, second->getOperator(), isBiased);
+    nodeMap[first].push_back(newNode);
+    nodeMap[second].push_back(newNode);
+    reverseNodeMap[newNode] = { first, second };
+    return newNode;
+}
 
-namespace ComputationalGraph {
+ComputationalNode* ComputationalGraph::addEdge(ComputationalNode* node, FunctionType type, bool isBiased) {
+    auto newNode = new ComputationalNode(false, type, isBiased);
+    nodeMap[node].push_back(newNode);
+    reverseNodeMap[newNode] = { node };
+    return newNode;
+}
 
-    class ComputationalGraph {
-    private:
-        std::unordered_map<std::shared_ptr<ComputationalNode>, std::vector<std::shared_ptr<ComputationalNode>>> nodeMap;
-        std::unordered_map<std::shared_ptr<ComputationalNode>, std::vector<std::shared_ptr<ComputationalNode>>> reverseNodeMap;
+std::list<ComputationalNode*> ComputationalGraph::topologicalSort() {
+    std::list<ComputationalNode*> sortedNodes;
+    std::unordered_set<ComputationalNode*> visited;
 
-    public:
-        ComputationalGraph() = default;
-
-        std::shared_ptr<ComputationalNode> addEdge(std::shared_ptr<ComputationalNode> first, std::shared_ptr<ComputationalNode> second, bool isBiased) {
-            auto newNode = std::make_shared<ComputationalNode>(false, second->getOperator(), isBiased);
-            nodeMap[first].push_back(newNode);
-            nodeMap[second].push_back(newNode);
-            reverseNodeMap[newNode] = { first, second };
-            return newNode;
+    for (const auto& pair : nodeMap) {
+        if (visited.find(pair.first) == visited.end()) {
+            sort(pair.first, visited, sortedNodes);
         }
+    }
+    return sortedNodes;
+}
 
-        std::shared_ptr<ComputationalNode> addEdge(std::shared_ptr<ComputationalNode> node, FunctionType type, bool isBiased) {
-            auto newNode = std::make_shared<ComputationalNode>(false, type, isBiased);
-            nodeMap[node].push_back(newNode);
-            reverseNodeMap[newNode] = { node };
-            return newNode;
-        }
-
-        std::list<std::shared_ptr<ComputationalNode>> topologicalSort() {
-            std::list<std::shared_ptr<ComputationalNode>> sortedNodes;
-            unordered_set<std::shared_ptr<ComputationalNode>> visited;
-
-            for (const auto& pair : nodeMap) {
-                if (visited.find(pair.first) == visited.end()) {
-                    sort(pair.first, visited, sortedNodes);
-                }
+void ComputationalGraph::sort(ComputationalNode* node, std::unordered_set<ComputationalNode*>& visited,
+                              std::list<ComputationalNode*>& sortedNodes) {
+    visited.insert(node);
+    if (nodeMap.find(node) != nodeMap.end()) {
+        for (auto& child : nodeMap[node]) {
+            if (visited.find(child) == visited.end()) {
+                sort(child, visited, sortedNodes);
             }
-            return sortedNodes;
         }
+    }
+    sortedNodes.push_back(node);
+}
 
-    private:
-        void sort(std::shared_ptr<ComputationalNode> node, std::unordered_set<std::shared_ptr<ComputationalNode>>& visited,
-                  std::list<std::shared_ptr<ComputationalNode>>& sortedNodes) {
-            visited.insert(node);
-            if (nodeMap.find(node) != nodeMap.end()) {
-                for (auto& child : nodeMap[node]) {
-                    if (visited.find(child) == visited.end()) {
-                        sort(child, visited, sortedNodes);
+void ComputationalGraph::updateValues() {
+    std::unordered_set<ComputationalNode*> visited;
+    for (const auto& pair : nodeMap) {
+        if (visited.find(pair.first) == visited.end()) {
+            update(pair.first, visited);
+        }
+    }
+}
+
+void ComputationalGraph::update(ComputationalNode* node, std::unordered_set<ComputationalNode*>& visited) {
+    visited.insert(node);
+    if (node->isLearnable()) {
+        node->updateValue();
+    }
+    if (nodeMap.find(node) != nodeMap.end()) {
+        for (auto& child : nodeMap[node]) {
+            if (visited.find(child) == visited.end()) {
+                update(child, visited);
+            }
+        }
+    }
+}
+
+Matrix* ComputationalGraph::calculateDerivative(ComputationalNode* node, ComputationalNode* child) {
+    auto left = reverseNodeMap[child][0];
+
+    if (reverseNodeMap[child].size() == 1) {
+        Function* function = nullptr;
+        switch (child->getFunctionType().value()) {
+            case FunctionType::SIGMOID:
+                function = new Sigmoid();
+                break;
+            case FunctionType::TANH:
+                function = new Tanh();
+                break;
+            case FunctionType::RELU:
+                function = new ReLU();
+                break;
+            case FunctionType::SOFTMAX:
+                function = new Softmax();
+                break;
+            default:
+                return nullptr;
+        }
+        auto result = new Matrix(child->getBackward()->elementProduct(function->derivative(child->getValue())));
+        delete function;
+        return result;
+    } else {
+        auto right = reverseNodeMap[child][1];
+        switch (child->getOperator()) {
+            case '*':
+                return left == node ?
+                       new Matrix(child->getBackward()->multiply(right->getValue()->transpose())) :
+                       new Matrix(left->getValue()->transpose()->multiply(child->getBackward()));
+            case '+':
+                return new Matrix(*child->getBackward());
+            case '-':
+                return left == node ?
+                       new Matrix(*child->getBackward()) :
+                       new Matrix(child->getBackward()->negate());
+        }
+    }
+    return nullptr;
+}
+
+std::vector<int> ComputationalGraph::forwardCalculation() {
+    auto sortedNodes = topologicalSort();
+    auto output = sortedNodes.front();
+
+    while (sortedNodes.size() > 1) {
+        auto currentNode = sortedNodes.back();
+        sortedNodes.pop_back();
+
+        for (auto& child : nodeMap[currentNode]) {
+            if (!child->hasValue()) {
+                if (child->getFunctionType()) {
+                    Function* function = nullptr;
+                    switch (child->getFunctionType().value()) {
+                        case FunctionType::TANH: function = new Tanh(); break;
+                        case FunctionType::SIGMOID: function = new Sigmoid(); break;
+                        case FunctionType::RELU: function = new ReLU(); break;
+                        case FunctionType::SOFTMAX: function = new Softmax(); break;
+                        default: break;
                     }
+                    child->setValue(new Matrix(function->calculate(currentNode->getValue())));
+                    delete function;
+                } else {
+                    child->setValue(new Matrix(*currentNode->getValue()));
                 }
-            }
-            sortedNodes.push_back(node);
-        }
-
-    public:
-        void updateValues() {
-            std::unordered_set<std::shared_ptr<ComputationalNode>> visited;
-            for (const auto& pair : nodeMap) {
-                if (visited.find(pair.first) == visited.end()) {
-                    update(pair.first, visited);
-                }
-            }
-        }
-
-    private:
-        void update(std::shared_ptr<ComputationalNode> node, std::unordered_set<std::shared_ptr<ComputationalNode>>& visited) {
-            visited.insert(node);
-            if (node->isLearnable()) {
-                node->updateValue();
-            }
-            if (nodeMap.find(node) != nodeMap.end()) {
-                for (auto& child : nodeMap[node]) {
-                    if (visited.find(child) == visited.end()) {
-                        update(child, visited);
-                    }
-                }
-            }
-        }
-
-    public:
-        std::shared_ptr<Matrix> calculateDerivative(std::shared_ptr<ComputationalNode> node, std::shared_ptr<ComputationalNode> child) {
-            auto left = reverseNodeMap[child][0];
-
-            if (reverseNodeMap[child].size() == 1) {
-                std::unique_ptr<Function> function;
-                switch (child->getFunctionType().value()) {
-                    case FunctionType::SIGMOID:
-                        function = std::make_unique<Sigmoid>();
-                        break;
-                    case FunctionType::TANH:
-                        function = std::make_unique<Tanh>();
-                        break;
-                    case FunctionType::RELU:
-                        function = std::make_unique<ReLU>();
-                        break;
-                    case FunctionType::SOFTMAX:
-                        function = std::make_unique<Softmax>();
-                        break;
-                    default:
-                        return nullptr;
-                }
-                return std::make_shared<Matrix>(child->getBackward()->elementProduct(function->derivative(child->getValue())));
             } else {
-                auto right = reverseNodeMap[child][1];
                 switch (child->getOperator()) {
-                    case '*':
-                        return left == node ?
-                               std::make_shared<Matrix>(child->getBackward()->multiply(right->getValue()->transpose())) :
-                               std::make_shared<Matrix>(left->getValue()->transpose()->multiply(child->getBackward()));
-                    case '+':
-                        return std::make_shared<Matrix>(*child->getBackward());
-                    case '-':
-                        return left == node ?
-                               std::make_shared<Matrix>(*child->getBackward()) :
-                               std::make_shared<Matrix>(child->getBackward()->negate());
+                    case '*': child->setValue(new Matrix(child->getValue()->multiply(currentNode->getValue()))); break;
+                    case '+': child->getValue()->add(*currentNode->getValue()); break;
+                    case '-': child->getValue()->subtract(*currentNode->getValue()); break;
                 }
             }
-            return nullptr;
         }
+    }
 
-        std::vector<int> forwardCalculation() {
-            auto sortedNodes = topologicalSort();
-            auto output = sortedNodes.front();
-
-            while (sortedNodes.size() > 1) {
-                auto currentNode = sortedNodes.back();
-                sortedNodes.pop_back();
-
-                for (auto& child : nodeMap[currentNode]) {
-                    if (!child->hasValue()) {
-                        if (child->getFunctionType()) {
-                            std::unique_ptr<Function> function;
-                            switch (child->getFunctionType().value()) {
-                                case FunctionType::TANH: function = std::make_unique<Tanh>(); break;
-                                case FunctionType::SIGMOID: function = std::make_unique<Sigmoid>(); break;
-                                case FunctionType::RELU: function = std::make_unique<ReLU>(); break;
-                                case FunctionType::SOFTMAX: function = std::make_unique<Softmax>(); break;
-                                default: break;
-                            }
-                            child->setValue(function->calculate(currentNode->getValue()));
-                        } else {
-                            child->setValue(std::make_shared<Matrix>(*currentNode->getValue()));
-                        }
-                    } else {
-                        switch (child->getOperator()) {
-                            case '*': child->setValue(child->getValue()->multiply(currentNode->getValue())); break;
-                            case '+': child->getValue()->add(*currentNode->getValue()); break;
-                            case '-': child->getValue()->subtract(*currentNode->getValue()); break;
-                        }
-                    }
-                }
+    std::vector<int> classLabelIndex;
+    for (size_t i = 0; i < output->getValue()->getRow(); i++) {
+        double max = -1e9;
+        int labelIndex = -1;
+        for (size_t j = 0; j < output->getValue()->getColumn(); j++) {
+            if (output->getValue()->getValue(i, j) > max) {
+                max = output->getValue(i, j);
+                labelIndex = static_cast<int>(j);
             }
-
-            std::vector<int> classLabelIndex;
-            for (size_t i = 0; i < output->getValue()->getRow(); i++) {
-                double max = -1e9;
-                int labelIndex = -1;
-                for (size_t j = 0; j < output->getValue()->getColumn(); j++) {
-                    if (output->getValue()->getValue(i, j) > max) {
-                        max = output->getValue(i, j);
-                        labelIndex = static_cast<int>(j);
-                    }
-                }
-                classLabelIndex.push_back(labelIndex);
-            }
-            return classLabelIndex;
         }
-    };
-
-} // namespace ComputationalGraph
-
-#endif // COMPUTATIONAL_GRAPH_HPP
+        classLabelIndex.push_back(labelIndex);
+    }
+    return classLabelIndex;
+}
