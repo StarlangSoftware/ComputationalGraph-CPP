@@ -1,2 +1,0 @@
-/Library/Developer/CommandLineTools/usr/bin/ar qc libComputationalGraph.a CMakeFiles/ComputationalGraph.dir/src/Sigmoid.cpp.o CMakeFiles/ComputationalGraph.dir/src/ReLU.cpp.o CMakeFiles/ComputationalGraph.dir/src/Softmax.cpp.o CMakeFiles/ComputationalGraph.dir/src/Tanh.cpp.o CMakeFiles/ComputationalGraph.dir/src/ComputationalNode.cpp.o CMakeFiles/ComputationalGraph.dir/src/ComputationalGraph.cpp.o CMakeFiles/ComputationalGraph.dir/src/ComputationalGraphWithTensor.cpp.o
-/Library/Developer/CommandLineTools/usr/bin/ranlib libComputationalGraph.a
