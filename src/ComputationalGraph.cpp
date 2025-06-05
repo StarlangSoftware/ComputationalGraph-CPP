@@ -1,32 +1,33 @@
+
 #include "ComputationalGraph.h"
-#include "ReLU.h"
-#include "Sigmoid.h"
-#include "ComputationalNode.h"
-#include "Softmax.h"
-#include "Tanh.h"
 
-ComputationalGraph::ComputationalGraph() = default;
 
-ComputationalNode* ComputationalGraph::addEdge(ComputationalNode* first, ComputationalNode* second, bool isBiased) {
-    auto newNode = new ComputationalNode(false, second->getOperator(), isBiased);
+template<typename NodeType>
+ComputationalGraph<NodeType>::ComputationalGraph() = default;
+
+template<typename NodeType>
+NodeType *ComputationalGraph<NodeType>::addEdge(NodeType *first, NodeType *second, bool isBiased) {
+    auto newNode = new NodeType(false, second->getOperator(), isBiased);
     nodeMap[first].push_back(newNode);
     nodeMap[second].push_back(newNode);
-    reverseNodeMap[newNode] = { first, second };
+    reverseNodeMap[newNode] = {first, second};
     return newNode;
 }
 
-ComputationalNode* ComputationalGraph::addEdge(ComputationalNode* node, FunctionType type, bool isBiased) {
-    auto newNode = new ComputationalNode(false, type, isBiased);
+template<typename NodeType>
+NodeType *ComputationalGraph<NodeType>::addEdge(NodeType *node, FunctionType type, bool isBiased) {
+    auto newNode = new NodeType(false, type, isBiased);
     nodeMap[node].push_back(newNode);
-    reverseNodeMap[newNode] = { node };
+    reverseNodeMap[newNode] = {node};
     return newNode;
 }
 
-std::list<ComputationalNode*> ComputationalGraph::topologicalSort() {
-    std::list<ComputationalNode*> sortedNodes;
-    std::unordered_set<ComputationalNode*> visited;
+template<typename NodeType>
+std::list<NodeType *> ComputationalGraph<NodeType>::topologicalSort() {
+    std::list<NodeType *> sortedNodes;
+    std::unordered_set<NodeType *> visited;
 
-    for (const auto& pair : nodeMap) {
+    for (const auto &pair: nodeMap) {
         if (visited.find(pair.first) == visited.end()) {
             sort(pair.first, visited, sortedNodes);
         }
@@ -34,11 +35,13 @@ std::list<ComputationalNode*> ComputationalGraph::topologicalSort() {
     return sortedNodes;
 }
 
-void ComputationalGraph::sort(ComputationalNode* node, std::unordered_set<ComputationalNode*>& visited,
-                              std::list<ComputationalNode*>& sortedNodes) {
+template<typename NodeType>
+void ComputationalGraph<NodeType>::sort(NodeType *node,
+                                                  std::unordered_set<NodeType *> &visited,
+                                                  std::list<NodeType *> &sortedNodes) {
     visited.insert(node);
     if (nodeMap.find(node) != nodeMap.end()) {
-        for (auto& child : nodeMap[node]) {
+        for (auto &child: nodeMap[node]) {
             if (visited.find(child) == visited.end()) {
                 sort(child, visited, sortedNodes);
             }
@@ -47,22 +50,25 @@ void ComputationalGraph::sort(ComputationalNode* node, std::unordered_set<Comput
     sortedNodes.push_back(node);
 }
 
-void ComputationalGraph::updateValues() {
-    std::unordered_set<ComputationalNode*> visited;
-    for (const auto& pair : nodeMap) {
+template<typename NodeType>
+void ComputationalGraph<NodeType>::updateValues() {
+    std::unordered_set<NodeType *> visited;
+    for (const auto &pair: nodeMap) {
         if (visited.find(pair.first) == visited.end()) {
             update(pair.first, visited);
         }
     }
 }
 
-void ComputationalGraph::update(ComputationalNode* node, std::unordered_set<ComputationalNode*>& visited) {
+template<typename NodeType>
+void ComputationalGraph<NodeType>::update(NodeType *node,
+                                                    std::unordered_set<NodeType *> &visited) {
     visited.insert(node);
     if (node->isLearnable()) {
         node->updateValue();
     }
     if (nodeMap.find(node) != nodeMap.end()) {
-        for (auto& child : nodeMap[node]) {
+        for (auto &child: nodeMap[node]) {
             if (visited.find(child) == visited.end()) {
                 update(child, visited);
             }
@@ -70,49 +76,45 @@ void ComputationalGraph::update(ComputationalNode* node, std::unordered_set<Comp
     }
 }
 
-Matrix* ComputationalGraph::calculateDerivative(ComputationalNode* node, ComputationalNode* child) {
+template<typename NodeType>
+Tensor ComputationalGraph<NodeType>::calculateDerivative(NodeType *node, NodeType *child) {
     auto left = reverseNodeMap[child][0];
 
     if (reverseNodeMap[child].size() == 1) {
-        Function* function = nullptr;
         switch (child->getFunctionType().value()) {
             case FunctionType::SIGMOID:
-                function = new Sigmoid();
-                break;
+                return child->getBackward()->elementwise_op(child->getValue()->sigmoid_derivative(),
+                                                            std::multiplies<float>());
             case FunctionType::TANH:
-                function = new Tanh();
-                break;
+                return child->getBackward()->elementwise_op(child->getValue()->tanh_derivative(),
+                                                            std::multiplies<float>());
             case FunctionType::RELU:
-                function = new ReLU();
-                break;
+                return child->getBackward()->elementwise_op(child->getValue()->relu_derivative(),
+                                                            std::multiplies<float>());
             case FunctionType::SOFTMAX:
-                function = new Softmax();
-                break;
+                return child->getBackward()->elementwise_op(child->getValue()->softmax_derivative(),
+                                                            std::multiplies<float>());
             default:
-                return nullptr;
+                return Tensor();
         }
-        auto result = new Matrix(child->getBackward()->elementProduct(function->derivative(child->getValue())));
-        delete function;
-        return result;
     } else {
         auto right = reverseNodeMap[child][1];
         switch (child->getOperator()) {
             case '*':
-                return left == node ?
-                       new Matrix(child->getBackward()->multiply(right->getValue()->transpose())) :
-                       new Matrix(left->getValue()->transpose()->multiply(child->getBackward()));
+                return (left == node) ?
+                       child->getBackward()->dot(*right->getValue()) :
+                       left->getValue()->transpose().dot(*child->getBackward());
             case '+':
-                return new Matrix(*child->getBackward());
+                return *child->getBackward();
             case '-':
-                return left == node ?
-                       new Matrix(*child->getBackward()) :
-                       new Matrix(child->getBackward()->negate());
+                return (left == node) ? *child->getBackward() : child->getBackward()->negate();
         }
     }
-    return nullptr;
+    return Tensor();
 }
 
-std::vector<int> ComputationalGraph::forwardCalculation() {
+template<typename NodeType>
+std::vector<int> ComputationalGraph<NodeType>::forwardCalculation() {
     auto sortedNodes = topologicalSort();
     auto output = sortedNodes.front();
 
@@ -120,27 +122,41 @@ std::vector<int> ComputationalGraph::forwardCalculation() {
         auto currentNode = sortedNodes.back();
         sortedNodes.pop_back();
 
-        for (auto& child : nodeMap[currentNode]) {
+        for (auto &child: nodeMap[currentNode]) {
             if (!child->hasValue()) {
                 if (child->getFunctionType()) {
-                    Function* function = nullptr;
                     switch (child->getFunctionType().value()) {
-                        case FunctionType::TANH: function = new Tanh(); break;
-                        case FunctionType::SIGMOID: function = new Sigmoid(); break;
-                        case FunctionType::RELU: function = new ReLU(); break;
-                        case FunctionType::SOFTMAX: function = new Softmax(); break;
-                        default: break;
+                        case FunctionType::TANH:
+                            child->setValue(new Tensor(currentNode->getValue()->tanh()));
+                            break;
+                        case FunctionType::SIGMOID:
+                            child->setValue(new Tensor(currentNode->getValue()->sigmoid()));
+                            break;
+                        case FunctionType::RELU:
+                            child->setValue(new Tensor(currentNode->getValue()->relu()));
+                            break;
+                        case FunctionType::SOFTMAX:
+                            child->setValue(new Tensor(currentNode->getValue()->softmax()));
+                            break;
+                        default:
+                            break;
                     }
-                    child->setValue(new Matrix(function->calculate(currentNode->getValue())));
-                    delete function;
                 } else {
-                    child->setValue(new Matrix(*currentNode->getValue()));
+                    child->setValue(new Tensor(*currentNode->getValue()));
                 }
             } else {
                 switch (child->getOperator()) {
-                    case '*': child->setValue(new Matrix(child->getValue()->multiply(currentNode->getValue()))); break;
-                    case '+': child->getValue()->add(*currentNode->getValue()); break;
-                    case '-': child->getValue()->subtract(*currentNode->getValue()); break;
+                    case '*':
+                        child->setValue(new Tensor(child->getValue()->dot(*currentNode->getValue())));
+                        break;
+                    case '+':
+                        child->setValue(new Tensor(
+                                child->getValue()->elementwise_op(*currentNode->getValue(), std::plus<float>())));
+                        break;
+                    case '-':
+                        child->setValue(new Tensor(
+                                child->getValue()->elementwise_op(*currentNode->getValue(), std::minus<float>())));
+                        break;
                 }
             }
         }
@@ -148,11 +164,11 @@ std::vector<int> ComputationalGraph::forwardCalculation() {
 
     std::vector<int> classLabelIndex;
     for (size_t i = 0; i < output->getValue()->getRow(); i++) {
-        double max = -1e9;
+        float max = -1e9;
         int labelIndex = -1;
         for (size_t j = 0; j < output->getValue()->getColumn(); j++) {
-            if (output->getValue()->getValue(i, j) > max) {
-                max = output->getValue(i, j);
+            if (output->getValue()->get({static_cast<int>(i), static_cast<int>(j)}) > max) {
+                max = output->getValue()->get({static_cast<int>(i), static_cast<int>(j)});
                 labelIndex = static_cast<int>(j);
             }
         }
@@ -160,3 +176,7 @@ std::vector<int> ComputationalGraph::forwardCalculation() {
     }
     return classLabelIndex;
 }
+
+// Explicit template instantiation
+template
+class ComputationalGraph<ComputationalGraph::ComputationalNode>;

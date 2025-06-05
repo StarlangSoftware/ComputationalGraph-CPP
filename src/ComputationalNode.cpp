@@ -1,6 +1,4 @@
-// computational_node.cpp
 #include "ComputationalNode.h"
-
 
 ComputationalNode::ComputationalNode(bool learnable, FunctionType functionType, bool isBiased)
         : isLearnable(learnable), functionType(functionType), isBiased(isBiased), operatorSymbol('\0') {}
@@ -8,7 +6,7 @@ ComputationalNode::ComputationalNode(bool learnable, FunctionType functionType, 
 ComputationalNode::ComputationalNode(bool learnable, char operatorSymbol, bool isBiased)
         : isLearnable(learnable), operatorSymbol(operatorSymbol), isBiased(isBiased), functionType(std::nullopt) {}
 
-ComputationalNode::ComputationalNode(const Matrix &value, char operatorSymbol)
+ComputationalNode::ComputationalNode(const Tensor &value, char operatorSymbol)
         : value(value), isLearnable(true), operatorSymbol(operatorSymbol), functionType(std::nullopt),
           isBiased(false) {}
 
@@ -24,7 +22,7 @@ char ComputationalNode::getOperator() const {
     return operatorSymbol;
 }
 
-const Matrix &ComputationalNode::getValue() const {
+const Tensor &ComputationalNode::getValue() const {
     return value;
 }
 
@@ -32,23 +30,21 @@ bool ComputationalNode::getIsLearnable() const {
     return isLearnable;
 }
 
-const Matrix &ComputationalNode::getBackward() const {
+const Tensor &ComputationalNode::getBackward() const {
     return backward;
 }
 
-void ComputationalNode::setValue(const Matrix &newValue) {
+void ComputationalNode::setValue(const Tensor &newValue) {
     value = newValue;
 }
 
-void ComputationalNode::setBackward(const Matrix &newBackward) {
+void ComputationalNode::setBackward(const Tensor &newBackward) {
     backward = newBackward;
 }
 
 void ComputationalNode::updateValue() {
-    for (size_t i = 0; i < value.getRow(); ++i) {
-        for (size_t j = 0; j < value.getColumn(); ++j) {
-            value.setValue(i, j, value.getValue(i, j) + backward.getValue(i, j));
-        }
+    if (value.getShape() != backward.getShape()) {
+        throw std::invalid_argument("Shape mismatch during updateValue()");
     }
+    value = value + backward;
 }
-

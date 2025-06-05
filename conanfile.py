@@ -6,7 +6,7 @@ from conan.tools.files import copy
 
 class ComputationalGraphConan(ConanFile):
     name = "ComputationalGraph"
-    version = "1.0"
+    version = "1.0.0"
     requires = ["math/1.0.0"]
     license = "GPL License"
     author = "Olcay Taner Yildiz olcay.yildiz@ozyegin.edu.tr"

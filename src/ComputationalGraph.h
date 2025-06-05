@@ -1,35 +1,47 @@
-#ifndef COMPUTATIONAL_GRAPH_HPP
-#define COMPUTATIONAL_GRAPH_HPP
+//
+// Created by Olcay Taner YILDIZ on 10.04.2025.
+//
+
+#ifndef COMPUTATIONAL_GRAPH_WITH_TENSOR_H
+#define COMPUTATIONAL_GRAPH_WITH_TENSOR_H
 
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
 #include <list>
 
+#include "Tensor.h"
 #include "ComputationalNode.h"
-#include "FunctionType.h"
-#include "Matrix.h"
 
+
+template<typename NodeType>
 class ComputationalGraph {
 private:
-    std::unordered_map<ComputationalNode*, std::vector<ComputationalNode*>> nodeMap;
-    std::unordered_map<ComputationalNode*, std::vector<ComputationalNode*>> reverseNodeMap;
+    std::unordered_map<NodeType *, std::vector<NodeType *>> nodeMap;
+    std::unordered_map<NodeType *, std::vector<NodeType *>> reverseNodeMap;
 
-    void sort(ComputationalNode* node, std::unordered_set<ComputationalNode*>& visited,
-              std::list<ComputationalNode*>& sortedNodes);
-    void update(ComputationalNode* node, std::unordered_set<ComputationalNode*>& visited);
+    void sort(NodeType *node,
+              std::unordered_set<NodeType *> &visited,
+              std::list<NodeType *> &sortedNodes);
+
+    void update(NodeType *node,
+                std::unordered_set<NodeType *> &visited);
 
 public:
     ComputationalGraph();
 
-    ComputationalNode* addEdge(ComputationalNode* first, ComputationalNode* second, bool isBiased);
-    ComputationalNode* addEdge(ComputationalNode* node, FunctionType type, bool isBiased);
+    NodeType *addEdge(NodeType *first, NodeType *second, bool isBiased);
 
-    std::list<ComputationalNode*> topologicalSort();
+    NodeType *addEdge(NodeType *node, FunctionType type, bool isBiased);
+
+    std::list<NodeType *> topologicalSort();
+
     void updateValues();
 
-    Matrix* calculateDerivative(ComputationalNode* node, ComputationalNode* child);
+    Tensor calculateDerivative(NodeType *node, NodeType *child);
+
     std::vector<int> forwardCalculation();
 };
 
-#endif // COMPUTATIONAL_GRAPH_HPP
+
+#endif // COMPUTATIONAL_GRAPH_WITH_TENSOR_H

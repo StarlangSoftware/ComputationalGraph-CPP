@@ -10,10 +10,11 @@
 #include <random>
 #include <algorithm>
 #include <cassert>
+#include <Matrix.h>
+
 #include "src/ComputationalGraph.h"
 #include "src/ComputationalNode.h"
 #include "src/FunctionType.h"
-#include "src/Matrix.h"
 
 Matrix createInputMatrix(const std::vector<std::string>& instance) {
     Matrix matrix(1, instance.size() - 1);

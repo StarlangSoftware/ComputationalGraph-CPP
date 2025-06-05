@@ -1,51 +1,36 @@
-//
-// Created by Olcay Taner YILDIZ on 10.04.2025.
-//
+#ifndef COMPUTATIONALGRAPH_COMPUTATIONALNODEWITHTENSOR_H
+#define COMPUTATIONALGRAPH_COMPUTATIONALNODEWITHTENSOR_H
 
-// computational_node.h
-#ifndef COMPUTATIONAL_NODE_H
-#define COMPUTATIONAL_NODE_H
 
-#include <math/Matrix.h>
 #include <optional>
-
 #include "FunctionType.h"
-
+#include <Tensor.h>
 
 class ComputationalNode {
 private:
     std::optional<FunctionType> functionType;
     char operatorSymbol;
-    Matrix value;
-    Matrix backward;
+    Tensor value;
+    Tensor backward;
     bool isLearnable;
     bool isBiased;
 
 public:
     ComputationalNode(bool learnable, FunctionType functionType, bool isBiased);
-
     ComputationalNode(bool learnable, char operatorSymbol, bool isBiased);
-
-    ComputationalNode(const Matrix &value, char operatorSymbol);
+    ComputationalNode(const Tensor &value, char operatorSymbol);
 
     bool getIsBiased() const;
-
     std::optional<FunctionType> getFunctionType() const;
-
     char getOperator() const;
-
-    const Matrix &getValue() const;
-
+    const Tensor& getValue() const;
+    const Tensor& getBackward() const;
     bool getIsLearnable() const;
 
-    const Matrix &getBackward() const;
 
-    void setValue(const Matrix &newValue);
-
-    void setBackward(const Matrix &newBackward);
-
+    void setValue(const Tensor &newValue);
+    void setBackward(const Tensor &newBackward);
     void updateValue();
 };
 
-
-#endif // COMPUTATIONAL_NODE_H
+#endif //COMPUTATIONALGRAPH_COMPUTATIONALNODEWITHTENSOR_H
