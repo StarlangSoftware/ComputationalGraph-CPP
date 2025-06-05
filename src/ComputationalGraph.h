@@ -14,31 +14,30 @@
 #include "ComputationalNode.h"
 
 
-template<typename NodeType>
 class ComputationalGraph {
 private:
-    std::unordered_map<NodeType *, std::vector<NodeType *>> nodeMap;
-    std::unordered_map<NodeType *, std::vector<NodeType *>> reverseNodeMap;
+    std::unordered_map<ComputationalNode*, std::vector<ComputationalNode*>> nodeMap;
+    std::unordered_map<ComputationalNode*, std::vector<ComputationalNode*>> reverseNodeMap;
 
-    void sort(NodeType *node,
-              std::unordered_set<NodeType *> &visited,
-              std::list<NodeType *> &sortedNodes);
+    void sort(ComputationalNode* node,
+              std::unordered_set<ComputationalNode*> &visited,
+              std::list<ComputationalNode*> &sortedNodes);
 
-    void update(NodeType *node,
-                std::unordered_set<NodeType *> &visited);
+    void update(ComputationalNode* node,
+                std::unordered_set<ComputationalNode*> &visited);
 
 public:
     ComputationalGraph();
 
-    NodeType *addEdge(NodeType *first, NodeType *second, bool isBiased);
+    ComputationalNode* addEdge(ComputationalNode* first, ComputationalNode* second, bool isBiased);
 
-    NodeType *addEdge(NodeType *node, FunctionType type, bool isBiased);
+    ComputationalNode* addEdge(ComputationalNode* node, FunctionType type, bool isBiased);
 
-    std::list<NodeType *> topologicalSort();
+    std::list<ComputationalNode* > topologicalSort();
 
     void updateValues();
 
-    Tensor calculateDerivative(NodeType *node, NodeType *child);
+    Tensor calculateDerivative(ComputationalNode* node, ComputationalNode* child);
 
     std::vector<int> forwardCalculation();
 };

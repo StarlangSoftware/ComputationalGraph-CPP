@@ -2,30 +2,24 @@
 #include "ComputationalGraph.h"
 
 
-template<typename NodeType>
-ComputationalGraph<NodeType>::ComputationalGraph() = default;
-
-template<typename NodeType>
-NodeType *ComputationalGraph<NodeType>::addEdge(NodeType *first, NodeType *second, bool isBiased) {
-    auto newNode = new NodeType(false, second->getOperator(), isBiased);
+ComputationalNode* ComputationalGraph::addEdge(ComputationalNode* first, ComputationalNode* second, bool isBiased) {
+    auto newNode = new ComputationalNode(false, second->getOperator(), isBiased);
     nodeMap[first].push_back(newNode);
     nodeMap[second].push_back(newNode);
     reverseNodeMap[newNode] = {first, second};
     return newNode;
 }
 
-template<typename NodeType>
-NodeType *ComputationalGraph<NodeType>::addEdge(NodeType *node, FunctionType type, bool isBiased) {
-    auto newNode = new NodeType(false, type, isBiased);
+ComputationalNode* ComputationalGraph::addEdge(ComputationalNode* node, FunctionType type, bool isBiased) {
+    auto newNode = new ComputationalNode(false, type, isBiased);
     nodeMap[node].push_back(newNode);
     reverseNodeMap[newNode] = {node};
     return newNode;
 }
 
-template<typename NodeType>
-std::list<NodeType *> ComputationalGraph<NodeType>::topologicalSort() {
-    std::list<NodeType *> sortedNodes;
-    std::unordered_set<NodeType *> visited;
+std::list<ComputationalNode *> ComputationalGraph::topologicalSort() {
+    std::list<ComputationalNode *> sortedNodes;
+    std::unordered_set<ComputationalNode *> visited;
 
     for (const auto &pair: nodeMap) {
         if (visited.find(pair.first) == visited.end()) {
@@ -35,10 +29,9 @@ std::list<NodeType *> ComputationalGraph<NodeType>::topologicalSort() {
     return sortedNodes;
 }
 
-template<typename NodeType>
-void ComputationalGraph<NodeType>::sort(NodeType *node,
-                                                  std::unordered_set<NodeType *> &visited,
-                                                  std::list<NodeType *> &sortedNodes) {
+void ComputationalGraph::sort(ComputationalNode *node,
+                                                  std::unordered_set<ComputationalNode *> &visited,
+                                                  std::list<ComputationalNode *> &sortedNodes) {
     visited.insert(node);
     if (nodeMap.find(node) != nodeMap.end()) {
         for (auto &child: nodeMap[node]) {
@@ -50,9 +43,8 @@ void ComputationalGraph<NodeType>::sort(NodeType *node,
     sortedNodes.push_back(node);
 }
 
-template<typename NodeType>
-void ComputationalGraph<NodeType>::updateValues() {
-    std::unordered_set<NodeType *> visited;
+void ComputationalGraph::updateValues() {
+    std::unordered_set<ComputationalNode *> visited;
     for (const auto &pair: nodeMap) {
         if (visited.find(pair.first) == visited.end()) {
             update(pair.first, visited);
@@ -60,11 +52,9 @@ void ComputationalGraph<NodeType>::updateValues() {
     }
 }
 
-template<typename NodeType>
-void ComputationalGraph<NodeType>::update(NodeType *node,
-                                                    std::unordered_set<NodeType *> &visited) {
+void ComputationalGraph::update(ComputationalNode *node, std::unordered_set<ComputationalNode *> &visited) {
     visited.insert(node);
-    if (node->isLearnable()) {
+    if (node->getIsLearnable()) {
         node->updateValue();
     }
     if (nodeMap.find(node) != nodeMap.end()) {
@@ -76,8 +66,7 @@ void ComputationalGraph<NodeType>::update(NodeType *node,
     }
 }
 
-template<typename NodeType>
-Tensor ComputationalGraph<NodeType>::calculateDerivative(NodeType *node, NodeType *child) {
+Tensor ComputationalGraph::calculateDerivative(ComputationalNode *node, ComputationalNode *child) {
     auto left = reverseNodeMap[child][0];
 
     if (reverseNodeMap[child].size() == 1) {
@@ -113,8 +102,7 @@ Tensor ComputationalGraph<NodeType>::calculateDerivative(NodeType *node, NodeTyp
     return Tensor();
 }
 
-template<typename NodeType>
-std::vector<int> ComputationalGraph<NodeType>::forwardCalculation() {
+std::vector<int> ComputationalGraph::forwardCalculation() {
     auto sortedNodes = topologicalSort();
     auto output = sortedNodes.front();
 
@@ -176,7 +164,3 @@ std::vector<int> ComputationalGraph<NodeType>::forwardCalculation() {
     }
     return classLabelIndex;
 }
-
-// Explicit template instantiation
-template
-class ComputationalGraph<ComputationalGraph::ComputationalNode>;

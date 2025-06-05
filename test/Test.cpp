@@ -12,10 +12,6 @@
 #include <cassert>
 #include <Matrix.h>
 
-#include "src/ComputationalGraph.h"
-#include "src/ComputationalNode.h"
-#include "src/FunctionType.h"
-
 Matrix createInputMatrix(const std::vector<std::string>& instance) {
     Matrix matrix(1, instance.size() - 1);
     for (size_t i = 0; i < instance.size() - 1; ++i) {
