@@ -1,14 +1,17 @@
 #include "ComputationalNode.h"
 
 ComputationalNode::ComputationalNode(bool learnable, FunctionType functionType, bool isBiased)
-        : isLearnable(learnable), functionType(functionType), isBiased(isBiased), operatorSymbol('\0') {}
+        : learnable(learnable), functionType(functionType), isBiased(isBiased), operatorSymbol('\0') {}
 
 ComputationalNode::ComputationalNode(bool learnable, char operatorSymbol, bool isBiased)
-        : isLearnable(learnable), operatorSymbol(operatorSymbol), isBiased(isBiased), functionType(std::nullopt) {}
+        : learnable(learnable), operatorSymbol(operatorSymbol), isBiased(isBiased), functionType(std::nullopt) {}
 
 ComputationalNode::ComputationalNode(const Tensor &value, char operatorSymbol)
-        : value(value), isLearnable(true), operatorSymbol(operatorSymbol), functionType(std::nullopt),
-          isBiased(false) {}
+        : value(value), learnable(true), operatorSymbol(operatorSymbol), functionType(std::nullopt), isBiased(false) {}
+
+bool ComputationalNode::isLearnable() const {
+    return learnable;
+}
 
 bool ComputationalNode::getIsBiased() const {
     return isBiased;
@@ -24,10 +27,6 @@ char ComputationalNode::getOperator() const {
 
 const Tensor &ComputationalNode::getValue() const {
     return value;
-}
-
-bool ComputationalNode::getIsLearnable() const {
-    return isLearnable;
 }
 
 const Tensor &ComputationalNode::getBackward() const {

@@ -1,9 +1,5 @@
-//
-// Created by Olcay Taner YILDIZ on 10.04.2025.
-//
-
-#ifndef COMPUTATIONAL_GRAPH_WITH_TENSOR_H
-#define COMPUTATIONAL_GRAPH_WITH_TENSOR_H
+#ifndef COMPUTATIONAL_GRAPH_H
+#define COMPUTATIONAL_GRAPH_H
 
 #include <unordered_map>
 #include <unordered_set>
@@ -12,35 +8,37 @@
 
 #include "Tensor.h"
 #include "ComputationalNode.h"
-
+#include "FunctionType.h"
 
 class ComputationalGraph {
 private:
-    std::unordered_map<ComputationalNode*, std::vector<ComputationalNode*>> nodeMap;
-    std::unordered_map<ComputationalNode*, std::vector<ComputationalNode*>> reverseNodeMap;
+    std::unordered_map<ComputationalNode*, std::vector<ComputationalNode*> > nodeMap;
+    std::unordered_map<ComputationalNode*, std::vector<ComputationalNode*> > reverseNodeMap;
 
-    void sort(ComputationalNode* node,
-              std::unordered_set<ComputationalNode*> &visited,
-              std::list<ComputationalNode*> &sortedNodes);
-
-    void update(ComputationalNode* node,
-                std::unordered_set<ComputationalNode*> &visited);
+    void sort(ComputationalNode* node, std::unordered_set<ComputationalNode*>& visited, std::list<ComputationalNode*>& sortedNodes);
+    void updateRecursive(ComputationalNode* node, std::unordered_set<ComputationalNode*>& visited);
+    void clearRecursive(ComputationalNode* node, std::unordered_set<ComputationalNode*>& visited);
 
 public:
     ComputationalGraph();
 
-    ComputationalNode* addEdge(ComputationalNode* first, ComputationalNode* second, bool isBiased);
+    ComputationalNode* addEdge(ComputationalNode* first, ComputationalNode* second, bool isBiased = false);
+    ComputationalNode* addEdge(ComputationalNode* node, FunctionType type, bool isBiased = false);
 
-    ComputationalNode* addEdge(ComputationalNode* node, FunctionType type, bool isBiased);
-
-    std::list<ComputationalNode* > topologicalSort();
+    std::list<ComputationalNode*> topologicalSort();
 
     void updateValues();
+    void clear();
 
     Tensor calculateDerivative(ComputationalNode* node, ComputationalNode* child);
 
+    void getBiased(ComputationalNode* node);
+
     std::vector<int> forwardCalculation();
+
+    std::vector<int> predict();
+
+    // Additional methods for backpropagation/learning can be added as needed.
 };
 
-
-#endif // COMPUTATIONAL_GRAPH_WITH_TENSOR_H
+#endif // COMPUTATIONAL_GRAPH_H

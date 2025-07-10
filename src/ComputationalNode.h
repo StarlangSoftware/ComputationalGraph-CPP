@@ -1,7 +1,6 @@
 #ifndef COMPUTATIONALGRAPH_COMPUTATIONALNODEWITHTENSOR_H
 #define COMPUTATIONALGRAPH_COMPUTATIONALNODEWITHTENSOR_H
 
-
 #include <optional>
 #include "FunctionType.h"
 #include <Tensor.h>
@@ -12,21 +11,20 @@ private:
     char operatorSymbol;
     Tensor value;
     Tensor backward;
-    bool isLearnable;
     bool isBiased;
+    bool learnable; // <-- You NEED this line
 
 public:
     ComputationalNode(bool learnable, FunctionType functionType, bool isBiased);
     ComputationalNode(bool learnable, char operatorSymbol, bool isBiased);
     ComputationalNode(const Tensor &value, char operatorSymbol);
 
+    bool isLearnable() const; // Use only this one
     bool getIsBiased() const;
     std::optional<FunctionType> getFunctionType() const;
     char getOperator() const;
     const Tensor& getValue() const;
     const Tensor& getBackward() const;
-    bool getIsLearnable() const;
-
 
     void setValue(const Tensor &newValue);
     void setBackward(const Tensor &newBackward);
