@@ -1,7 +1,7 @@
 For Developers
 ============
 
-You can also see [Java](https://github.com/starlangsoftware/ComputationalGraph), [Python](https://github.com/starlangsoftware/ComputationalGraph-Py), [Cython](https://github.com/starlangsoftware/ComputationalGraph-Cy), or [C#](https://github.com/starlangsoftware/ComputationalGraph-CS) repository.
+You can also see [Java](https://github.com/starlangsoftware/ComputationalGraph), [C](https://github.com/starlangsoftware/ComputationalGraph-C), [Python](https://github.com/starlangsoftware/ComputationalGraph-Py), [Cython](https://github.com/starlangsoftware/ComputationalGraph-Cy), or [C#](https://github.com/starlangsoftware/ComputationalGraph-CS) repository.
 
 ## Requirements
 
