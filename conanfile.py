@@ -5,9 +5,9 @@ from conan.tools.cmake import CMakeToolchain, CMake, cmake_layout, CMakeDeps
 from conan.tools.files import copy
 
 class ComputationalGraphConan(ConanFile):
-    name = "ComputationalGraph"
+    name = "computational_graph"
     version = "1.0.0"
-    requires = ["math/1.0.0"]
+    requires = ["math/1.0.0", "classification/1.0.0"]
     license = "GPL License"
     author = "Olcay Taner Yildiz olcay.yildiz@ozyegin.edu.tr"
     url = "https://github.com/StarlangSoftware/ComputationalGraph-CPP"

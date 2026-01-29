@@ -2,10 +2,10 @@
 #define FUNCTION_TYPE_HPP
 
     enum class FunctionType {
-        SIGMOID,
-        TANH,
-        RELU,
-        SOFTMAX
+        DELU,
+        DROPOUT,
+        ELU,
+        DEFAULT
     };
 
 #endif // FUNCTION_TYPE_HPP
