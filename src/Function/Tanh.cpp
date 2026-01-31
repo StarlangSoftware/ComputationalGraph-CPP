@@ -6,7 +6,7 @@
  * @param tensor The tensor whose values are to be computed.
  * @return Tanh(x).
  */
-Tensor calculate(const Tensor &tensor) {
+Tensor Tanh::calculate(const Tensor &tensor) {
     vector<double> values;
     vector<double> oldValues = tensor.getData();
     values.reserve(oldValues.size());
@@ -22,7 +22,7 @@ Tensor calculate(const Tensor &tensor) {
  * @param backward Backward tensor.
  * @return Gradient value of the corresponding node.
  */
-Tensor derivative(const Tensor &value, const Tensor &backward) {
+Tensor Tanh::derivative(const Tensor &value, const Tensor &backward) {
     vector<double> values;
     vector<double> oldValues = value.getData();
     vector<double> backwardValues = backward.getData();

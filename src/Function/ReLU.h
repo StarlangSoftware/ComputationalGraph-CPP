@@ -6,8 +6,8 @@
 
 class ReLU : public Function {
 public:
-    [[nodiscard]] Tensor calculate(const Tensor& matrix) override;
-    [[nodiscard]] Tensor derivative(const Tensor& matrix, const Tensor& backward) override;
+    [[nodiscard]] Tensor calculate(const Tensor &value) override;
+    [[nodiscard]] Tensor derivative(const Tensor &value, const Tensor &backward) override;
 };
 
 #endif // RELU_H

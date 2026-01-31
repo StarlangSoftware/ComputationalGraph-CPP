@@ -4,7 +4,7 @@
 #include <utility>
 #include <Vector.h>
 
-void ComputationalGraph::computeIfAbsent(map<ComputationalNode*, vector<ComputationalNode*>> map, ComputationalNode* first,
+void ComputationalGraph::computeIfAbsent(map<ComputationalNode*, vector<ComputationalNode*>>& map, ComputationalNode* first,
                                          ComputationalNode* second) {
     vector<ComputationalNode*> newNodes;
     if (map.contains(first)) {
@@ -20,7 +20,7 @@ void ComputationalGraph::computeIfAbsent(map<ComputationalNode*, vector<Computat
  * @param visited A set of visited nodes.
  * @return A list representing the partial topological order.
  */
-deque<ComputationalNode*> ComputationalGraph::sortRecursive(ComputationalNode *node, set<ComputationalNode *> visited) {
+deque<ComputationalNode*> ComputationalGraph::sortRecursive(ComputationalNode *node, set<ComputationalNode *>& visited) {
     deque<ComputationalNode*> queue;
     visited.emplace(node);
     if (nodeMap.contains(node)) {
@@ -50,7 +50,7 @@ deque<ComputationalNode *> ComputationalGraph::topologicalSort() {
             deque<ComputationalNode*> queue = sortRecursive(node.first, visited);
             while (!queue.empty()) {
                 sortedList.emplace_back(queue.front());
-                sortedList.pop_front();
+                queue.pop_front();
             }
         }
     }
@@ -275,6 +275,7 @@ void ComputationalGraph::backpropagation(Optimizer *optimizer, const vector<int>
         }
     }
     optimizer->updateValues(nodeMap);
+    clear();
 }
 
 /**
@@ -366,7 +367,7 @@ vector<int> ComputationalGraph::forwardCalculation(bool enableDropout) {
                     if (child->getFunction() != nullptr) {
                         Function* function = child->getFunction();
                         Tensor currentValue = currentNode->getValue();
-                        if (function->type != FunctionType::DROPOUT) {
+                        if (function->type == FunctionType::DROPOUT) {
                             if (enableDropout) {
                                 child->setValue(function->calculate(currentValue));
                             } else {

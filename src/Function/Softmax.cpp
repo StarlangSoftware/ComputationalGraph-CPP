@@ -7,7 +7,7 @@
  * @param tensor The tensor whose values are to be computed.
  * @return Softmax(x).
  */
-Tensor calculate(const Tensor &tensor) {
+Tensor Softmax::calculate(const Tensor &tensor) {
     vector<double> values;
     vector<double> oldValues = tensor.getData();
     int lastDimensionSize = tensor.getShape()[tensor.getShape().size() - 1];
@@ -22,7 +22,7 @@ Tensor calculate(const Tensor &tensor) {
     }
     values.reserve(oldValues.size());
     for (int i = 0; i < oldValues.size(); i++) {
-        values.push_back(exp(sumList[i]) / sumList[i / lastDimensionSize]);
+        values.push_back(exp(oldValues[i]) / sumList[i / lastDimensionSize]);
     }
     return Tensor(values, tensor.getShape());
 }
@@ -33,7 +33,7 @@ Tensor calculate(const Tensor &tensor) {
  * @param backward Backward tensor.
  * @return Gradient value of the corresponding node.
  */
-Tensor derivative(const Tensor &tensor, const Tensor &backward) {
+Tensor Softmax::derivative(const Tensor &tensor, const Tensor &backward) {
     int lastDimensionSize = tensor.getShape()[tensor.getShape().size() - 1];
     vector<double> values;
     vector<double> oldValuesTensor = tensor.getData();

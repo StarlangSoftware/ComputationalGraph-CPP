@@ -5,7 +5,7 @@
  * @param value The tensor whose values are to be computed.
  * @return Sigmoid(x).
  */
-Tensor calculate(const Tensor &value) {
+Tensor Sigmoid::calculate(const Tensor &value) {
     vector<double> values;
     const vector<double> tensorValues = value.getData();
     values.reserve(tensorValues.size());
@@ -22,7 +22,7 @@ Tensor calculate(const Tensor &value) {
  * @param backward Backward tensor.
  * @return Gradient value of the corresponding node.
  */
-Tensor derivative(const Tensor &tensor, const Tensor &backward) {
+Tensor Sigmoid::derivative(const Tensor &tensor, const Tensor &backward) {
     vector<double> values;
     const vector<double> tensorValues = tensor.getData();
     const vector<double> backwardValues = backward.getData();

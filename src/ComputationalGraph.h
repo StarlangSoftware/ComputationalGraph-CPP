@@ -21,8 +21,8 @@ class ComputationalGraph {
 private:
     map<ComputationalNode*, vector<ComputationalNode*>> nodeMap;
     map<ComputationalNode*, vector<ComputationalNode*>> reverseNodeMap;
-    void computeIfAbsent(map<ComputationalNode*, vector<ComputationalNode*>> map, ComputationalNode* first, ComputationalNode* second);
-    deque<ComputationalNode*> sortRecursive(ComputationalNode* node, set<ComputationalNode*> visited);
+    void computeIfAbsent(map<ComputationalNode*, vector<ComputationalNode*>>& map, ComputationalNode* first, ComputationalNode* second);
+    deque<ComputationalNode*> sortRecursive(ComputationalNode* node, set<ComputationalNode*>& visited);
     deque<ComputationalNode*> topologicalSort();
     void clearRecursive(set<ComputationalNode*>& visited, ComputationalNode* node);
     void clear();
@@ -31,7 +31,6 @@ private:
     Tensor calculateDerivative(ComputationalNode* node, ComputationalNode* child);
     void calculateRMinusY(ComputationalNode* output, const vector<int>& classLabelIndex);
     void getBiased(ComputationalNode* tensor);
-    vector<int> forwardCalculation(bool enableDropout);
 
 public:
     /**
@@ -49,11 +48,13 @@ public:
     virtual ClassificationPerformance test(vector<Tensor> testSet) = 0;
 
 protected:
+    vector<ComputationalNode> inputNodes;
     /**
      * Retrieves the class label indexes associated with the given output node in the computational graph.
      * @param outputNode The output node for which the class label indexes are to be retrieved.
      * @return A list of integers representing the class label indexes.
      */
+    vector<int> forwardCalculation(bool enableDropout);
     virtual vector<int> getClassLabels(ComputationalNode* outputNode) = 0;
     ComputationalNode* addEdge(ComputationalNode* first, MultiplicationNode* second, bool isBiased);
     ComputationalNode* addEdge(ComputationalNode* first, Function* function, bool isBiased);
