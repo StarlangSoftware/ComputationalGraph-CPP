@@ -15,7 +15,7 @@ enum NodeType {
 
 class ComputationalNode {
 protected:
-    enum NodeType nodeType;
+    enum NodeType nodeType = NodeType::COMPUTATIONAL_NODE_TYPE;
     Tensor value = Tensor({0});
     Tensor backward = Tensor({0});
     bool learnable = false;

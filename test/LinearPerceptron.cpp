@@ -23,10 +23,10 @@ void LinearPerceptron::train(vector<Tensor> trainSet, NeuralNetworkParameter par
     vector<double> initialWeights = initialization->initialize(number_of_input_units_with_biased, number_of_classes, randomEngine);
     const vector<int> weightsShape = {number_of_input_units_with_biased, number_of_classes};
     const auto weightsTensor = Tensor(initialWeights, weightsShape);
-    auto w = MultiplicationNode(weightsTensor);
-    auto a = addEdge(input, &w, false);
-    Softmax softmax;
-    auto outputNode = addEdge(a, &softmax, false);
+    auto w = new MultiplicationNode(weightsTensor);
+    auto a = addEdge(input, w, false);
+    auto softmax = new Softmax();
+    auto outputNode = addEdge(a, softmax, false);
     for (int i = 0; i < parameters.getEpoch(); i++) {
         for (const auto& instance : trainSet) {
             input->setValue(createInputTensor(instance));

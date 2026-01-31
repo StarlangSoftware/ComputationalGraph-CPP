@@ -22,10 +22,10 @@ void LinearPerceptronSingleUnit::train(vector<Tensor> trainSet, NeuralNetworkPar
     const vector<double> initialWeights = {1.0, 1.0, 1.0, 1.0};
     const vector<int> weightsShape = {2, 2};
     const auto weightsTensor = Tensor(initialWeights, weightsShape);
-    auto w = MultiplicationNode(weightsTensor);
-    auto a = addEdge(input, &w, false);
-    Softmax softmax;
-    auto outputNode = addEdge(a, &softmax, false);
+    auto w = new MultiplicationNode(weightsTensor);
+    auto a = addEdge(input, w, false);
+    auto softmax = new Softmax();
+    auto outputNode = addEdge(a, softmax, false);
     Tensor dataTensor = trainSet[0];
     Tensor input1 = createInputTensor(dataTensor);
     input->setValue(input1);
