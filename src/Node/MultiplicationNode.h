@@ -10,17 +10,17 @@
 class MultiplicationNode : public ComputationalNode {
 private:
     bool hadamard = false;
-    ComputationalNode priorityNode = ComputationalNode(false, false);
+    ComputationalNode* priorityNode = nullptr;
     bool priorityNull = true;
 public:
     MultiplicationNode(bool learnable, bool isBiased, bool isHadamard);
-    MultiplicationNode(bool learnable, bool isBiased, bool isHadamard, ComputationalNode priorityNode);
+    MultiplicationNode(bool learnable, bool isBiased, bool isHadamard, ComputationalNode* priorityNode);
     MultiplicationNode(bool learnable, bool isBiased, Tensor value, bool isHadamard);
     MultiplicationNode(bool learnable, Tensor value);
     MultiplicationNode(Tensor value);
     MultiplicationNode(bool learnable, bool isBiased);
     [[nodiscard]] bool isHadamard() const;
-    [[nodiscard]] ComputationalNode getPriorityNode() const;
+    [[nodiscard]] ComputationalNode* getPriorityNode() const;
     [[nodiscard]] bool isPriorityNull() const;
 };
 

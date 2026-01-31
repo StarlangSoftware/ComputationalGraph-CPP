@@ -5,7 +5,7 @@
 #include "NeuralNetworkParameter.h"
 
 NeuralNetworkParameter::NeuralNetworkParameter(const int seed, const int epoch, Optimizer *optimizer,
-    const Initialization initialization, const double dropout) {
+    Initialization* initialization, const double dropout) {
     this->seed = seed;
     this->epoch = epoch;
     this->optimizer = optimizer;
@@ -21,10 +21,14 @@ int NeuralNetworkParameter::getEpoch() const {
     return epoch;
 }
 
-Initialization NeuralNetworkParameter::getInitialization() const {
+Initialization* NeuralNetworkParameter::getInitialization() const {
     return initialization;
 }
 
 double NeuralNetworkParameter::getDropout() const {
     return dropout;
+}
+
+int NeuralNetworkParameter::getSeed() const {
+    return seed;
 }

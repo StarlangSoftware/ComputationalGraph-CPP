@@ -16,7 +16,7 @@
  * @param randomEngine The {@link default_random_engine} instance used for generating values (allows for reproducibility).
  * @return An {@link vector} of Doubles containing the initialized weight values.
  */
-vector<double> HeUniformInitialization::initialize(int row, int column, default_random_engine &randomEngine) {
+vector<double> HeUniformInitialization::initialize(int row, int column, default_random_engine& randomEngine) {
     vector<double> data;
     uniform_real_distribution <> distribution (0, 1);
     for (int i = 0; i < row; i++) {

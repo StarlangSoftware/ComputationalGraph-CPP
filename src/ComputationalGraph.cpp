@@ -198,7 +198,7 @@ Tensor ComputationalGraph::calculateDerivative(ComputationalNode *node, Computat
 }
 
 ComputationalNode* ComputationalGraph::addEdge(ComputationalNode* first, MultiplicationNode* second, const bool isBiased) {
-    ComputationalNode* newNode = new MultiplicationNode(false, isBiased, second->isHadamard(), *first);
+    ComputationalNode* newNode = new MultiplicationNode(false, isBiased, second->isHadamard(), first);
     computeIfAbsent(nodeMap, first, newNode);
     computeIfAbsent(reverseNodeMap, newNode, first);
     computeIfAbsent(nodeMap, second, newNode);
@@ -215,7 +215,7 @@ ComputationalNode * ComputationalGraph::addEdge(ComputationalNode *first, Functi
 
 ComputationalNode * ComputationalGraph::addEdge(ComputationalNode *first, ComputationalNode *second, const bool isBiased,
     bool isHadamard) {
-    auto* newNode = new MultiplicationNode(false, isBiased, isHadamard, *first);
+    auto* newNode = new MultiplicationNode(false, isBiased, isHadamard, first);
     computeIfAbsent(nodeMap, first, newNode);
     computeIfAbsent(reverseNodeMap, newNode, first);
     computeIfAbsent(nodeMap, second, newNode);
@@ -405,7 +405,7 @@ vector<int> ComputationalGraph::forwardCalculation(bool enableDropout) {
                         if (((MultiplicationNode*) child)->isHadamard()) {
                             child->setValue(childValue.hadamardProduct(currentValue));
                         } else {
-                            if (((MultiplicationNode*) child)->getPriorityNode() != (*currentNode)) {
+                            if (((MultiplicationNode*) child)->getPriorityNode() != currentNode) {
                                 child->setValue(childValue.multiply(currentValue));
                             } else {
                                 child->setValue(currentValue.multiply(childValue));

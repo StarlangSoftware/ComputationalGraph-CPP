@@ -9,7 +9,7 @@
 
 class HeUniformInitialization : public Initialization{
 public:
-    vector<double> initialize(int row, int column, default_random_engine &randomEngine);
+    vector<double> initialize(int row, int column, default_random_engine& randomEngine);
 };
 
 

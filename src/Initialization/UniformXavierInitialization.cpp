@@ -18,7 +18,7 @@
  * @param randomEngine The {@link default_random_engine} instance used for generating values.
  * @return An {@link vector} containing the initialized weight values.
  */
-vector<double> UniformXavierInitialization::initialize(int row, int column, default_random_engine &randomEngine) {
+vector<double> UniformXavierInitialization::initialize(int row, int column, default_random_engine& randomEngine) {
     vector<double> data;
     uniform_real_distribution <> distribution (0, 1);
     for (int i = 0; i < row; i++) {
@@ -26,4 +26,5 @@ vector<double> UniformXavierInitialization::initialize(int row, int column, defa
             data.push_back((2 * distribution(randomEngine) - 1) * sqrt(6.0 / (row + column)));
         }
     }
+    return data;
 }

@@ -11,9 +11,9 @@ MultiplicationNode::MultiplicationNode(bool learnable, bool isBiased, bool isHad
     this->nodeType = MULTIPLICATION_NODE_TYPE;
 }
 
-MultiplicationNode::MultiplicationNode(bool learnable, bool isBiased, bool isHadamard, ComputationalNode priorityNode) : ComputationalNode(learnable, isBiased){
+MultiplicationNode::MultiplicationNode(bool learnable, bool isBiased, bool isHadamard, ComputationalNode* priorityNode) : ComputationalNode(learnable, isBiased){
     this->hadamard = isHadamard;
-    this->priorityNode = std::move(priorityNode);
+    this->priorityNode = priorityNode;
     this->priorityNull = false;
     this->nodeType = MULTIPLICATION_NODE_TYPE;
 }
@@ -45,7 +45,7 @@ bool MultiplicationNode::isHadamard() const {
     return this->hadamard;
 }
 
-ComputationalNode MultiplicationNode::getPriorityNode() const {
+ComputationalNode* MultiplicationNode::getPriorityNode() const {
     return this->priorityNode;
 }
 

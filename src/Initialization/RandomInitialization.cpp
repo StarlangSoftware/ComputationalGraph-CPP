@@ -17,9 +17,10 @@
  * @param randomEngine The {@link default_random_engine} instance used for generating values.
  * @return An {@link vector} containing the initialized weight values.
  */
-vector<double> RandomInitialization::initialize(int row, int column, default_random_engine &randomEngine) {
+vector<double> RandomInitialization::initialize(int row, int column, default_random_engine& randomEngine) {
     vector<double> data;
     uniform_real_distribution <> distribution (0, 1);
+    data.reserve(row * column);
     for (int i = 0; i < row * column; i++) {
         data.push_back(-0.01 + 0.02 * distribution(randomEngine));
     }

@@ -9,7 +9,9 @@
 using namespace std;
 
 class Initialization {
-    vector<double> initialize(int row, int column, const default_random_engine &randomEngine);
+public:
+    virtual ~Initialization() = default;
+    virtual vector<double> initialize(int row, int column, default_random_engine& randomEngine) = 0;
 };
 
 #endif //COMPUTATIONALGRAPH_INITIALIZATION_H

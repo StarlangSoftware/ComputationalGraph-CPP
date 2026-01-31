@@ -14,14 +14,15 @@ private:
     Optimizer* optimizer;
     int epoch;
     int seed;
-    Initialization initialization;
+    Initialization* initialization;
     double dropout;
 public:
-    NeuralNetworkParameter(int seed, int epoch, Optimizer* optimizer, Initialization initialization = RandomInitialization(), double dropout = 0.0);
+    NeuralNetworkParameter(int seed, int epoch, Optimizer* optimizer, Initialization* initialization = new RandomInitialization(), double dropout = 0.0);
     [[nodiscard]] Optimizer* getOptimizer() const;
     [[nodiscard]] int getEpoch() const;
-    [[nodiscard]] Initialization getInitialization() const;
+    [[nodiscard]] Initialization* getInitialization() const;
     [[nodiscard]] double getDropout() const;
+    [[nodiscard]] int getSeed() const;
 };
 
 

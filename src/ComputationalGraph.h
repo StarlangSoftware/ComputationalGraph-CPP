@@ -48,7 +48,7 @@ public:
     virtual ClassificationPerformance test(vector<Tensor> testSet) = 0;
 
 protected:
-    vector<ComputationalNode> inputNodes;
+    vector<ComputationalNode*> inputNodes;
     /**
      * Retrieves the class label indexes associated with the given output node in the computational graph.
      * @param outputNode The output node for which the class label indexes are to be retrieved.
