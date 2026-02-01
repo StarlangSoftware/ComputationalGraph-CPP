@@ -18,6 +18,7 @@ private:
     double dropout;
 public:
     NeuralNetworkParameter(int seed, int epoch, Optimizer* optimizer, Initialization* initialization = new RandomInitialization(), double dropout = 0.0);
+    ~NeuralNetworkParameter();
     [[nodiscard]] Optimizer* getOptimizer() const;
     [[nodiscard]] int getEpoch() const;
     [[nodiscard]] Initialization* getInitialization() const;

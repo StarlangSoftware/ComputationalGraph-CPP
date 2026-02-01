@@ -160,8 +160,9 @@ static double irisData[150][5] = {{5.1,3.5,1.4,0.2,0},
 class NeuralNetwork : public ComputationalGraph{
 public:
     void createIrisDataset(vector<Tensor>& trainSet, vector<Tensor>& testSet);
+    ClassificationPerformance test(vector<Tensor> testSet) override;
 protected:
-    Tensor createInputTensor(const Tensor& instance);
+    vector<int> getClassLabels(ComputationalNode *outputNode) override;    Tensor createInputTensor(const Tensor& instance);
 };
 
 

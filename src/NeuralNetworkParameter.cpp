@@ -13,6 +13,11 @@ NeuralNetworkParameter::NeuralNetworkParameter(const int seed, const int epoch, 
     this->dropout = dropout;
 }
 
+NeuralNetworkParameter::~NeuralNetworkParameter() {
+    delete optimizer;
+    delete initialization;
+}
+
 Optimizer * NeuralNetworkParameter::getOptimizer() const {
     return optimizer;
 }

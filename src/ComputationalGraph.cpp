@@ -344,6 +344,13 @@ void ComputationalGraph::getBiased(ComputationalNode *tensor) {
     tensor->setValue(biasedValue);
 }
 
+ComputationalGraph::~ComputationalGraph() {
+    delete outputNode;
+    for (const auto& node : nodeMap) {
+        delete node.first;
+    }
+}
+
 /**
  * Perform a forward pass through the computational graph.
  * @param enableDropout Whether to enable dropout or not.

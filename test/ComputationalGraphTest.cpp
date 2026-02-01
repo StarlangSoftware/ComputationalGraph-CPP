@@ -8,6 +8,7 @@
 #include "../src/Optimizer/StochasticGradientDescent.h"
 #include "LinearPerceptron.h"
 #include "LinearPerceptronSingleUnit.h"
+#include "MultiLayerPerceptron.h"
 
 using namespace std;
 
@@ -30,7 +31,17 @@ void linearPerceptronTest() {
     ClassificationPerformance performance = graph.test(testSet);
 }
 
+void multiLayerPerceptronTest() {
+    vector<Tensor> trainSet;
+    vector<Tensor> testSet;
+    MultiLayerPerceptron graph;
+    graph.createIrisDataset(trainSet, testSet);
+    graph.train(trainSet, NeuralNetworkParameter(1, 10, new StochasticGradientDescent(0.1, 0.99)));
+    ClassificationPerformance performance = graph.test(testSet);
+}
+
 int main() {
     //linearPerceptronSingleUnitTest();
-    linearPerceptronTest();
+    //linearPerceptronTest();
+    multiLayerPerceptronTest();
 }

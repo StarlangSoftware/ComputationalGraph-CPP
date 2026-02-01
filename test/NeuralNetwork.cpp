@@ -28,3 +28,38 @@ void NeuralNetwork::createIrisDataset(vector<Tensor> &trainSet, vector<Tensor> &
         }
     }
 }
+
+ClassificationPerformance NeuralNetwork::test(vector<Tensor> testSet) {
+    int count = 0, total = 0;
+    for (const auto & instance : testSet) {
+        ComputationalNode* input = inputNodes[0];
+        input->setValue(createInputTensor(instance));
+        vector<int> output = predict();
+        int classLabel = output[0];
+        vector<int> index = {instance.getShape()[0] - 1};
+        if (classLabel == instance.getValue(index)) {
+            count++;
+        }
+        total++;
+    }
+    return ClassificationPerformance(count / (total + 0.0));
+}
+
+vector<int> NeuralNetwork::getClassLabels(ComputationalNode *outputNode) {
+    vector<int> classIndices;
+    Tensor outputValue = outputNode->getValue();
+    int cols = outputValue.getShape()[1];
+    double maxValue = -1;
+    int labelIndex = -1;
+    vector<int> indices = {0, 0};
+    for (int i = 0; i < cols; i++) {
+        indices[1] = i;
+        double value = outputValue.getValue(indices);
+        if (value > maxValue) {
+            maxValue = value;
+            labelIndex = i;
+        }
+    }
+    classIndices.push_back(labelIndex);
+    return classIndices;
+}

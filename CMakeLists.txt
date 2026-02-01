@@ -107,6 +107,8 @@ add_executable(Test src/Function/Sigmoid.cpp
         test/NeuralNetwork.h
         test/LinearPerceptron.cpp
         test/LinearPerceptron.h
+        test/MultiLayerPerceptron.cpp
+        test/MultiLayerPerceptron.h
 )
 
 target_link_libraries(Test math::math classification::classification)

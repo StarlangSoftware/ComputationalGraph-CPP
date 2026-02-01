@@ -11,9 +11,6 @@ class LinearPerceptron : public NeuralNetwork{
 public:
     LinearPerceptron();
     void train(vector<Tensor> trainSet, NeuralNetworkParameter parameters) override;
-    ClassificationPerformance test(vector<Tensor> testSet) override;
-protected:
-    vector<int> getClassLabels(ComputationalNode *outputNode) override;
 };
 
 
