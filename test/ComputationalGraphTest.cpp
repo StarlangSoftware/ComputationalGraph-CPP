@@ -5,6 +5,7 @@
 #include <Tensor.h>
 #include <vector>
 
+#include "DeepNetwork.h"
 #include "../src/Optimizer/StochasticGradientDescent.h"
 #include "LinearPerceptron.h"
 #include "LinearPerceptronSingleUnit.h"
@@ -40,8 +41,18 @@ void multiLayerPerceptronTest() {
     ClassificationPerformance performance = graph.test(testSet);
 }
 
+void deepNetworkTest() {
+    vector<Tensor> trainSet;
+    vector<Tensor> testSet;
+    DeepNetwork graph;
+    graph.createIrisDataset(trainSet, testSet);
+    graph.train(trainSet, NeuralNetworkParameter(1, 10, new StochasticGradientDescent(0.1, 0.99)));
+    ClassificationPerformance performance = graph.test(testSet);
+}
+
 int main() {
-    //linearPerceptronSingleUnitTest();
-    //linearPerceptronTest();
+    linearPerceptronSingleUnitTest();
+    linearPerceptronTest();
     multiLayerPerceptronTest();
+    deepNetworkTest();
 }
