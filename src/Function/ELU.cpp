@@ -3,6 +3,7 @@
 //
 
 #include "ELU.h"
+#include "math.h"
 
 ELU::ELU(const double a) {
     this->a = a;

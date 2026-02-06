@@ -1,4 +1,5 @@
 #include "Sigmoid.h"
+#include "math.h"
 
 /**
  * Computes the Sigmoid activation for the given tensor.

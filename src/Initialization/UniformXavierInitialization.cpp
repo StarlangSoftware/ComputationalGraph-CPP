@@ -3,6 +3,7 @@
 //
 
 #include "UniformXavierInitialization.h"
+#include "math.h"
 
 /**
  * Xavier Uniform Initialization.

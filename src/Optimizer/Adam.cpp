@@ -3,6 +3,7 @@
 //
 
 #include "Adam.h"
+#include "math.h"
 
 Adam::Adam(const double learningRate, const double etaDecrease, const double beta1, const double beta2, const double epsilon) : SGDMomentum(learningRate, etaDecrease, beta1){
     this->beta2 = beta2;

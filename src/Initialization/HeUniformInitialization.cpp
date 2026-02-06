@@ -2,6 +2,7 @@
 // Created by Olcay YILDIZ on 27.01.2026.
 //
 #include "HeUniformInitialization.h"
+#include "math.h"
 
 /**
  * He Uniform Initialization.
