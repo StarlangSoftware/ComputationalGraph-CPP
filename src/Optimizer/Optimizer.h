@@ -21,7 +21,7 @@ public:
     virtual ~Optimizer() = default;
     Optimizer(double learningRate, double etaDecrease);
     void setLearningRate();
-    void updateValues(map<ComputationalNode*, vector<ComputationalNode*>>& nodeMap);
+    virtual void updateValues(map<ComputationalNode*, vector<ComputationalNode*>>& nodeMap);
 };
 
 

@@ -10,7 +10,7 @@
 class Adam : public SGDMomentum{
 public:
     Adam(double learningRate, double etaDecrease, double beta1, double beta2, double epsilon);
-    void updateValues(map<ComputationalNode*, vector<ComputationalNode*>>& nodeMap);
+    void updateValues(map<ComputationalNode*, vector<ComputationalNode*>>& nodeMap) override;
 protected:
     vector<double> calculate(const ComputationalNode& node);
     void setGradients(ComputationalNode &node) override;
