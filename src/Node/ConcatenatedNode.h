@@ -7,16 +7,16 @@
 #include "ComputationalNode.h"
 #include <map>
 
-class ConcatenatedNode : public ComputationalNode{
+class ConcatenatedNode : public ComputationalNode {
 private:
-    map<ComputationalNode, int> indexMap;
-    int dimension;
+  map<const ComputationalNode *, int> indexMap;
+  int dimension;
+
 public:
-    ConcatenatedNode(int dimension);
-    [[nodiscard]] int getDimension() const;
-    [[nodiscard]] int getIndex(const ComputationalNode& node) const;
-    void addNode(const ComputationalNode& node);
+  ConcatenatedNode(int dimension);
+  [[nodiscard]] int getDimension() const;
+  [[nodiscard]] int getIndex(const ComputationalNode &node) const;
+  void addNode(const ComputationalNode *node);
 };
 
-
-#endif //COMPUTATIONALGRAPH_CONCATENATEDNODE_H
+#endif // COMPUTATIONALGRAPH_CONCATENATEDNODE_H

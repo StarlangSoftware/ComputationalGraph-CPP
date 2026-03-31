@@ -1,11 +1,22 @@
 #ifndef FUNCTION_TYPE_HPP
 #define FUNCTION_TYPE_HPP
 
-    enum class FunctionType {
-        DELU,
-        DROPOUT,
-        ELU,
-        DEFAULT
-    };
+enum class FunctionType {
+  DELU,
+  DROPOUT,
+  ELU,
+  LOGARITHM,
+  POWER,
+  SILU,
+  TANH_SHRINK,
+  CROSS_ENTROPY_LOSS,
+  MSE_LOSS,
+  NEGATION,
+  RELU,
+  SIGMOID,
+  SOFTMAX,
+  TANH,
+  DEFAULT
+};
 
 #endif // FUNCTION_TYPE_HPP

@@ -2,18 +2,20 @@
 // Created by Olcay YILDIZ on 26.01.2026.
 //
 
-#ifndef SOFTMAX_H
-#define SOFTMAX_H
+#ifndef SILU_H
+#define SILU_H
 
 #include "Function.h"
 #include <vector>
 
-class Softmax : public Function {
+class SiLU : public Function {
 public:
-  [[nodiscard]] Tensor calculate(const Tensor &matrix) override;
+  SiLU();
+  [[nodiscard]] Tensor calculate(const Tensor &value) override;
   [[nodiscard]] Tensor derivative(const Tensor &value,
                                   const Tensor &backward) override;
   ComputationalNode *addToGraph(const std::vector<ComputationalNode *> &inputNodes,
                              bool isBiased, ComputationalGraph *graph) override;
 };
-#endif // SOFTMAX_H
+
+#endif // SILU_H

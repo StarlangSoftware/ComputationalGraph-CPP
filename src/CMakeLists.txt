@@ -6,7 +6,8 @@ set(CMAKE_CXX_FLAGS "-O3")
 find_package(math REQUIRED)
 find_package(classification REQUIRED)
 
-add_library(ComputationalGraph Function/Sigmoid.cpp
+add_library(ComputationalGraph 
+        Function/Sigmoid.cpp
         Function/ReLU.cpp
         Function/Softmax.cpp
         Function/Tanh.cpp
@@ -26,6 +27,18 @@ add_library(ComputationalGraph Function/Sigmoid.cpp
         Function/ELU.h
         Function/Negation.cpp
         Function/Negation.h
+        Function/Logarithm.cpp
+        Function/Logarithm.h
+        Function/Power.cpp
+        Function/Power.h
+        Function/SiLU.cpp
+        Function/SiLU.h
+        Function/TanhShrink.cpp
+        Function/TanhShrink.h
+        Function/CrossEntropyLoss.cpp
+        Function/CrossEntropyLoss.h
+        Function/MeanSquaredErrorLoss.cpp
+        Function/MeanSquaredErrorLoss.h
         Initialization/Initialization.h
         Initialization/HeUniformInitialization.cpp
         Initialization/HeUniformInitialization.h

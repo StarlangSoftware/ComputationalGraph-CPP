@@ -1,1 +1,17 @@
 .idea/
+.DS_Store
+.cache/
+.cmake/
+.ninja_deps
+.ninja_log
+CGTest
+CMakeCache.txt
+CMakeFiles/
+Makefile
+Testing/
+build/
+build.ninja
+cmake-build-debug/
+cmake_install.cmake
+compile_commands.json
+src/CMakeUserPresets.json

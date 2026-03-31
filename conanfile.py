@@ -33,7 +33,7 @@ class ComputationalGraphConan(ConanFile):
         cmake.build()
 
     def package(self):
-        copy(conanfile=self, keep_path=False, src=join(self.source_folder), dst=join(self.package_folder, "include"), pattern="*.h")
+        copy(conanfile=self, keep_path=True, src=join(self.source_folder), dst=join(self.package_folder, "include"), pattern="*.h")
         copy(conanfile=self, keep_path=False, src=self.build_folder, dst=join(self.package_folder, "lib"), pattern="*.a")
         copy(conanfile=self, keep_path=False, src=self.build_folder, dst=join(self.package_folder, "lib"), pattern="*.so")
         copy(conanfile=self, keep_path=False, src=self.build_folder, dst=join(self.package_folder, "lib"), pattern="*.dylib")

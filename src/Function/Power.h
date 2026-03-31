@@ -2,18 +2,23 @@
 // Created by Olcay YILDIZ on 26.01.2026.
 //
 
-#ifndef SOFTMAX_H
-#define SOFTMAX_H
+#ifndef POWER_H
+#define POWER_H
 
 #include "Function.h"
 #include <vector>
 
-class Softmax : public Function {
+class Power : public Function {
+private:
+  double exponent;
+
 public:
-  [[nodiscard]] Tensor calculate(const Tensor &matrix) override;
+  explicit Power(double exponent);
+  [[nodiscard]] Tensor calculate(const Tensor &value) override;
   [[nodiscard]] Tensor derivative(const Tensor &value,
                                   const Tensor &backward) override;
   ComputationalNode *addToGraph(const std::vector<ComputationalNode *> &inputNodes,
                              bool isBiased, ComputationalGraph *graph) override;
 };
-#endif // SOFTMAX_H
+
+#endif // POWER_H
