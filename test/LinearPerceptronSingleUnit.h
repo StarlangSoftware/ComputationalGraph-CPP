@@ -4,18 +4,18 @@
 
 #ifndef COMPUTATIONALGRAPH_LINEARPERCEPTRONSINGLEUNIT_H
 #define COMPUTATIONALGRAPH_LINEARPERCEPTRONSINGLEUNIT_H
-#include "NeuralNetwork.h"
 #include "../src/ComputationalGraph.h"
+#include "NeuralNetwork.h"
 
-
-class LinearPerceptronSingleUnit : public NeuralNetwork{
+class LinearPerceptronSingleUnit : public NeuralNetwork {
 public:
-    LinearPerceptronSingleUnit();
-    void train(vector<Tensor> trainSet, NeuralNetworkParameter parameters) override;
-    ClassificationPerformance test(vector<Tensor> testSet) override;
+  LinearPerceptronSingleUnit();
+  void train(vector<Tensor> &trainSet,
+             NeuralNetworkParameter &parameters) override;
+  ClassificationPerformance test(const vector<Tensor> &testSet) override;
+
 protected:
-    vector<int> getClassLabels(ComputationalNode *outputNode) override;
+  vector<int> getClassLabels(ComputationalNode *outputNode) override;
 };
 
-
-#endif //COMPUTATIONALGRAPH_LINEARPERCEPTRONSINGLEUNIT_H
+#endif // COMPUTATIONALGRAPH_LINEARPERCEPTRONSINGLEUNIT_H

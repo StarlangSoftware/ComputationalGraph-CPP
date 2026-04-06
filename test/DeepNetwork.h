@@ -6,12 +6,11 @@
 #define COMPUTATIONALGRAPH_DEEPNETWORK_H
 #include "NeuralNetwork.h"
 
-
-class DeepNetwork : public NeuralNetwork{
+class DeepNetwork : public NeuralNetwork {
 public:
-    DeepNetwork();
-    void train(vector<Tensor> trainSet, NeuralNetworkParameter parameters) override;
+  DeepNetwork();
+  void train(vector<Tensor> &trainSet,
+             NeuralNetworkParameter &parameters) override;
 };
 
-
-#endif //COMPUTATIONALGRAPH_DEEPNETWORK_H
+#endif // COMPUTATIONALGRAPH_DEEPNETWORK_H

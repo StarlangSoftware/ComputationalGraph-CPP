@@ -65,7 +65,8 @@ void linearPerceptronSingleUnitTest() {
   Tensor dataTensor = Tensor(data1, shape1);
   trainSet.push_back(dataTensor);
   LinearPerceptronSingleUnit graph;
-  graph.train(trainSet, NeuralNetworkParameter(1, 1, nullptr));
+  NeuralNetworkParameter params(1, 1, nullptr);
+  graph.train(trainSet, params);
 }
 
 void linearPerceptronTest() {
@@ -73,8 +74,9 @@ void linearPerceptronTest() {
   vector<Tensor> testSet;
   LinearPerceptron graph;
   graph.createIrisDataset(trainSet, testSet);
-  graph.train(trainSet, NeuralNetworkParameter(
-                            1, 10, new StochasticGradientDescent(0.1, 0.99)));
+  NeuralNetworkParameter params(1, 10,
+                                new StochasticGradientDescent(0.1, 0.99));
+  graph.train(trainSet, params);
   ClassificationPerformance performance = graph.test(testSet);
   cout << "Linear Perceptron Test Finished!" << endl;
 }
@@ -84,8 +86,9 @@ void multiLayerPerceptronTest() {
   vector<Tensor> testSet;
   MultiLayerPerceptron graph;
   graph.createIrisDataset(trainSet, testSet);
-  graph.train(trainSet, NeuralNetworkParameter(
-                            1, 10, new StochasticGradientDescent(0.1, 0.99)));
+  NeuralNetworkParameter params(1, 10,
+                                new StochasticGradientDescent(0.1, 0.99));
+  graph.train(trainSet, params);
   ClassificationPerformance performance = graph.test(testSet);
 }
 
@@ -94,8 +97,9 @@ void deepNetworkTest() {
   vector<Tensor> testSet;
   DeepNetwork graph;
   graph.createIrisDataset(trainSet, testSet);
-  graph.train(trainSet, NeuralNetworkParameter(
-                            1, 10, new StochasticGradientDescent(0.1, 0.99)));
+  NeuralNetworkParameter params(1, 10,
+                                new StochasticGradientDescent(0.1, 0.99));
+  graph.train(trainSet, params);
   ClassificationPerformance performance = graph.test(testSet);
 }
 

@@ -6,12 +6,11 @@
 #define COMPUTATIONALGRAPH_LINEARPERCEPTRON_H
 #include "NeuralNetwork.h"
 
-
-class LinearPerceptron : public NeuralNetwork{
+class LinearPerceptron : public NeuralNetwork {
 public:
-    LinearPerceptron();
-    void train(vector<Tensor> trainSet, NeuralNetworkParameter parameters) override;
+  LinearPerceptron();
+  void train(vector<Tensor> &trainSet,
+             NeuralNetworkParameter &parameters) override;
 };
 
-
-#endif //COMPUTATIONALGRAPH_LINEARPERCEPTRON_H
+#endif // COMPUTATIONALGRAPH_LINEARPERCEPTRON_H
